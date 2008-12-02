@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Strict//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="content-type" content="%content_type%; charset=UTF-8"></meta>
+  <link rel="stylesheet" type="text/css" href="/cgi-bin/parse_css.pl?local=%css_file%"></link>
+  <title>%heading%</title>
+</head>
+<body>
+  <h1 class="heading">%heading%</h1>
+<TMPL_INCLUDE name="compact_menu.inc">
+  <div class="help">
+    under way... - here&apos;s what we&apos;ve got so far: <a href="#toc">contents</a><br />
+    <br />
+    <a name="hints">at first, just a few hints:</a><br />
+    <ul>
+      <li>the query will be performed as <a href="#ranked_query">&quot;ranked query&quot;</a> (or &quot;best match query&quot;, as opposed to &quot;exact match query&quot;)</li>
+      <li>there&apos;s no support for (hierarchical) grouping by parentheses yet - phrases (&quot;...&quot;) are supported though</li>
+      <li>BUT: <a href="#regular_expressions"><strong>regular expressions</strong></a> are supported!!! - scnr <strong>;-)</strong></li>
+      <li>terms beginning with a <code>+</code> sign <strong>must</strong> occur</li>
+      <li>terms beginning with a <code>-</code> sign <strong>must not</strong> occur</li>
+      <li>you can modify a term&apos;s weight by appending &quot;#&quot; plus value to the term which will be multiplied with the term&apos;s actual weight (negative values are possible as well)</li>
+      <li>e.g.: <a href="%cgi_file%?db=lir&amp;query=%2Bindexierung+ranking.*%231.5+automatisch%23-1.5+-thesaurus&amp;ranking=2&amp;regexp=1&amp;threshold=2.75&amp;action=get_results"><samp>+indexierung ranking.*#1.5 automatisch#-1.5 -thesaurus</samp></a><br />will find documents containing &quot;indexierung&quot; and preferably &quot;ranking&quot; (the &quot;.*&quot; indicates end-truncation) but not &quot;thesaurus&quot;, any occurence of &quot;automatisch&quot; will actually decrease the document&apos;s rank</li>
+    </ul>
+    <br />
+    <hr />
+    <br />
+    <h2><a name="toc">help contents</a></h2>
+    <table class="help_toc">
+      <tr>
+        <td>&#8226;</td>
+        <td class="toc_item"><a href="#ranked_query">ranked query</a></td>
+        <td>-</td>
+        <td>what&apos;s a <em>ranked query</em> anyway?!</td>
+      </tr>
+      <tr>
+        <td>&#8226;</td>
+        <td class="toc_item"><a href="#algorithms">algorithms</a></td>
+        <td>-</td>
+        <td>which ranking/weighting <em>algorithms</em> are supported?</td>
+      </tr>
+      <tr>
+        <td>&#8226;</td>
+        <td class="toc_item"><a href="#regular_expressions">regular expressions</a></td>
+        <td>-</td>
+        <td>what&apos;s so cool about <em>regular expressions</em>?!</td>
+      </tr>
+      <tr>
+        <td>&#8226;</td>
+        <td class="toc_item"><a href="#options">options</a></td>
+        <td>-</td>
+        <td>what do these <em>options</em> mean?</td>
+      </tr>
+    </table>
+    <br />
+    <hr />
+    <br />
+    <h2><a name="ranked_query">ranked query</a></h2>
+    a <i>ranked query</i> or <i>best match query</i>, as opposed to <i>exact match query</i> or <i>boolean query</i>, is a means of improving query results by assigning each result a weight according to its relevance for this particular query and displaying the results in descending order of relevance.<br />
+    thus most relevant documents will be presented at the top of the result list, without having less relevant documents completely omitted as is the case with boolean queries, where documents not containing <em>all</em> of the sought terms simply fall short. [<a name="footnote_href_1" href="#footnote_1">1</a>]<br />
+    in so doing recall gets immensely increased while some kind of (even better) precision is still achieved through the relevance ranking.<br />
+    <br />
+    yet still problematic is the concept of <i>relevance</i> [<a name="footnote_href_2" href="#footnote_2">2</a>] of a certain document for a particular query. the usual approach is to assign weights to the index terms and generate a document&apos;s weight (which acts as a measure for its relevance) from the matching term&apos;s weights.<br />
+    <em>lir.pl</em> offers using various term weights calculated by different <a class="help_me" href="#algorithms">algorithms</a> [<a name="footnote_href_3" href="#footnote_3">3</a>] to allow for comparison of their effects and appropriateness as relevance measures.
+    <br />
+    <br />
+    <a href="#toc" class="toc_ref">^toc</a>
+    <br />
+    <br />
+    <h2><a name="algorithms">algorithms</a> <span class="small_toc">(&gt;&gt; <a href="#salton">salton</a>, <a href="#kascade_einfach">kascade einfach</a>, <a href="#kascade_komplex">kascade komplex</a>, <a href="#robertson">robertson</a>, <a href="#idf">idf</a>, <a href="#custom">custom</a>, <a href="#no_ranking">none</a>)</span></h2>
+    formulae and annotations are based on [<a name="footnote_href_4" href="#footnote_4">4</a>] and <span class="litref">lepsky</span>, pp. <a class="ext" href="http://www.iws.fh-koeln.de/institut/personen/lepsky/skript-3d-automatische-indexierung-linguistik-statistik-04.pdf#page=75">75ff.</a> (cf. footnote [<a href="#footnote_3">3</a>])<br />
+    <br />
+    <div class="legend">
+      <span class="heading">legend:</span>
+      <table>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>docNum</td>
+          <td><em>N</em></td>
+          <td>number of documents in the collection</td>
+        </tr>
+        <tr>
+          <td>docNum(W)</td>
+          <td><em>df</em></td>
+          <td>number of documents containing basic form <var title="%tt_word%">w</var> (&quot;document frequency&quot;)</td>
+        </tr>
+        <tr>
+          <td>colLen</td>
+          <td></td>
+          <td>number of detected wordforms in the collection (&quot;collection length&quot;)</td>
+        </tr>
+        <tr>
+          <td>docLen(D)</td>
+          <td></td>
+          <td>number of detected wordforms in document <var title="%tt_document%">d</var></td>
+        </tr>
+        <tr>
+          <td>formLen(D)</td>
+          <td></td>
+          <td>number of distinct basic forms in document <var title="%tt_document%">d</var></td>
+        </tr>
+        <tr>
+          <td>freq(W, D)</td>
+          <td><em>tf</em></td>
+          <td>frequency of basic form <var title="%tt_word%">w</var> in document <var title="%tt_document%">d</var> (&quot;term frequency&quot;)</td>
+        </tr>
+        <tr>
+          <td>freq(W)</td>
+          <td></td>
+          <td>frequency of basic form <var title="%tt_word%">w</var> in the collection</td>
+        </tr>
+        <tr>
+          <td>len(W)</td>
+          <td></td>
+          <td>character length of basic form <var title="%tt_word%">W</var></td>
+        </tr>
+        <tr>
+          <td colspan="3"><hr style="width: 40%; text-align: left;" align="left" /></td>
+        </tr>
+        <tr>
+          <td>w(W, D)</td>
+          <td></td>
+          <td>weight of document <var title="%tt_document%">d</var> resulting from basic form <var title="%tt_word%">w</var><br />(the overall weight of the document - expressing the relevance of this document for the query - is calculated as the sum of the individual weights resulting from each of the query&apos;s terms)</td>
+        </tr>
+      </table>
+    </div> <!-- class="legend" -->
+    <ul class="algorithms">
+      <li>
+        <strong><a name="salton">salton</a></strong><br />
+        <div class="algorithm">
+          <span class="formula"><abbr title="%tt_weight%">w(W, D)</abbr> = <abbr title="%tt_freq%">freq(W, D)</abbr> * log(<abbr title="%tt_docnum%">docNum</abbr> / <abbr title="%tt_docfreq%">docNum(W)</abbr>)</span>
+        </div> <!-- class="algorithm" -->
+      </li>
+      <li>
+        <strong><a name="kascade_einfach">kascade einfach</a></strong><br />
+        <div class="algorithm">
+          w<sub>1</sub>(W) = 1 - <abbr title="%tt_docfreq%">docNum(W)</abbr> / <abbr title="%tt_colfreq%">freq(W)</abbr><br />
+          w<sub>2</sub>(W, D) = 1 - ((<abbr title="%tt_doclen%">docLen(D)</abbr> / <abbr title="%tt_collen%">colLen</abbr>) / (<abbr title="%tt_freq%">freq(W, D)</abbr> / <abbr title="%tt_colfreq%">freq(W)</abbr>)) [at least 0]<br />
+          w<sub>3</sub>(W) = log(<abbr title="%tt_len%">len(W)</abbr>) / 4<br />
+          <span class="formula"><abbr title="%tt_weight%">w(W, D)</abbr> = c<sub>1</sub> * w<sub>1</sub> + c<sub>2</sub> * w<sub>2</sub> + c<sub>3</sub> * w<sub>3</sub></span><br />
+          <span class="with">c<sub>1</sub>, c<sub>2</sub>, c<sub>3</sub>: arbitrary constants, default value: 1</span>
+        </div> <!-- class="algorithm" -->
+      </li>
+      <li>
+        <strong><a name="kascade_komplex">kascade komplex</a></strong><br />
+        <div class="algorithm">
+          w<sub>1</sub>(W) = 1 - <abbr title="%tt_docfreq%">docNum(W)</abbr> / E(<abbr title="%tt_docfreq%">docNum(W)</abbr>) [at least 0]<br />
+          <span class="with">E(<abbr title="%tt_docfreq%">docNum(W)</abbr>) = <abbr title="%tt_formlen%">formLen(D)</abbr> * (1 - e<sup>-&#955;</sup>)</span><br />
+          <span class="with">&#955; = <abbr title="%tt_colfreq%">freq(W)</abbr> / <abbr title="%tt_collen%">colLen</abbr></span><br />
+          w<sub>2</sub>(W, D) = (p(1) * 1 + ... + p(<abbr title="%tt_freq%">freq(W, D)</abbr>) * <abbr title="%tt_freq%">freq(W, D)</abbr>) / &#955;<br />
+          <span class="with">p(i) = e<sup>-&#955;</sup> * &#955;<sup>i</sup> / i!</span><br />
+          <span class="with">&#955; = <abbr title="%tt_colfreq%">freq(W)</abbr> * <abbr title="%tt_doclen%">docLen(D)</abbr> / <abbr title="%tt_collen%">colLen</abbr></span><br />
+          w<sub>3</sub>(W) = log(<abbr title="%tt_len%">len(W)</abbr>) / 4<br />
+          <span class="formula"><abbr title="%tt_weight%">w(W, D)</abbr> = c<sub>1</sub> * w<sub>1</sub> + c<sub>2</sub> * w<sub>2</sub> + c<sub>3</sub> * w<sub>3</sub></span><br />
+          <span class="with">c<sub>1</sub>, c<sub>2</sub>, c<sub>3</sub>: arbitrary constants, default value: 1</span>
+        </div> <!-- class="algorithm" -->
+      </li>
+      <li>
+        <strong><a name="robertson">robertson</a></strong><br />
+        <div class="algorithm">
+          <span class="formula"><abbr title="%tt_weight%">w(W, D)</abbr> = (c + 1) * <abbr title="%tt_freq%">freq(W, D)</abbr> / (c + <abbr title="%tt_freq%">freq(W, D)</abbr>) * log((<abbr title="%tt_docnum%">docNum</abbr> - <abbr title="%tt_docfreq%">docNum(W)</abbr> + 0.5) / (<abbr title="%tt_docfreq%">docNum(W)</abbr> + 0.5))</span><br />
+          <span class="with">c: arbitrary constant</span>
+        </div> <!-- class="algorithm" -->
+      </li>
+      <li>
+        <strong><a name="idf">idf</a></strong><br />
+        <div class="algorithm">
+          <span class="formula"><abbr title="%tt_weight%">w(W)</abbr> = log(<abbr title="%tt_docnum%">docNum</abbr> / <abbr title="%tt_docfreq%">docNum(W)</abbr>)</span>
+        </div> <!-- class="algorithm" -->
+      </li>
+      <li>
+        <strong><a name="custom">custom ranking</a></strong><br />
+        build your own ranking algorithm by using the following components to form an arithmetic expression:<br />
+        <br />
+        <div class="legend">
+          <span class="heading">special variables:</span>
+          <table>
+            <tr><td>tf</td><td>term frequency</td><td><em>= freq(W, D)</em></td></tr>
+            <tr><td>df</td><td>document frequency</td><td><em>= docNum(W)</em></td></tr>
+            <tr><td>N</td><td>number of documents in the collection</td><td><em>= docNum</em></td></tr>
+          </table>
+          <br />
+          <span class="heading">arithmetic operators:</span>
+          <table>
+            <tr><td>+</td><td>addition</td></tr>
+            <tr><td>-</td><td>subtraction</td></tr>
+            <tr><td>*</td><td>multiplication</td></tr>
+            <tr><td>/</td><td>division</td></tr>
+            <tr><td>%</td><td>modulus</td></tr>
+            <tr><td>**</td><td>exponent</td></tr>
+            <tr><td>()</td><td>parentheses</td></tr>
+          </table>
+          <br />
+          <span class="heading">arithmetic functions:</span>
+          <table>
+            <tr><td>atan2(Y,X)</td><td>arctangent of Y/X in the range -&#960; to &#960;</td></tr>
+            <tr><td>cos(EXPR)</td><td>cosine of EXPR (expressed in radians)</td></tr>
+            <tr><td>exp(EXPR)</td><td><abbr title="%tt_e%">e</abbr> to the power of EXPR</td></tr>
+            <tr><td>int(EXPR)</td><td>the integer portion of EXPR</td></tr>
+            <tr><td>log(EXPR)</td><td>logarithm (base <abbr title="%tt_e%">e</abbr>) of EXPR</td></tr>
+            <tr><td>rand(EXPR)</td><td>a random fractional number between 0 and the value of EXPR (EXPR should be positive)</td></tr>
+            <tr><td>sin(EXPR)</td><td>sine of EXPR (expressed in radians)</td></tr>
+            <tr><td>sqrt(EXPR)</td><td>square root of EXPR</td></tr>
+          </table>
+        </div> <!-- class="legend" -->
+        <br />
+        <strong>examples:</strong><br />
+        <table>
+          <tr>
+            <td><a class="help_me" href="#salton">salton</a></td>
+            <td><code><abbr title="%tt_freq%">tf</abbr> * log(<abbr title="%tt_docnum%">N</abbr> / <abbr title="%tt_docfreq%">df</abbr>)</code></td>
+          </tr>
+          <tr>
+            <td><a class="help_me" href="#robertson">robertson</a></td>
+            <td><code>(c + 1) * <abbr title="%tt_freq%">tf</abbr> / (c + <abbr title="%tt_freq%">tf</abbr>) * log((<abbr title="%tt_docnum%">N</abbr> - <abbr title="%tt_docfreq%">df</abbr> + 0.5) / (<abbr title="%tt_docfreq%">df</abbr> + 0.5))</code><br />where <code>c</code> should be replaced with a suitable constant</td>
+          </tr>
+          <tr>
+            <td><a class="help_me" href="#idf">idf</a></td>
+            <td><code>log(<abbr title="%tt_docnum%">N</abbr> / <abbr title="%tt_docfreq%">df</abbr>)</code></td>
+          </tr>
+          <tr>
+            <td colspan="2"><hr />default:</td>
+          </tr>
+          <tr>
+            <td><strong>tf*idf</strong></td>
+            <td><code><abbr title="%tt_freq%">tf</abbr> * log(<abbr title="%tt_docnum%">N</abbr> / <abbr title="%tt_docfreq%">df</abbr>)</code></td>
+          </tr>
+        </table>
+      </li>
+      <li>
+        <strong><a name="no_ranking">no ranking</a></strong><br />
+        documents are sorted by document number instead
+      </li>
+    </ul>
+    <a href="#toc" class="toc_ref">^toc</a>
+    <br />
+    <br />
+    <h2><a name="regular_expressions">regular expressions</a></h2>
+    in short:<br />
+    <ul>
+      <li>
+        <code>.</code> stands for <strong>any character</strong>
+      </li>
+      <li>
+        <code>[]</code> stands for <strong>any enumerated character</strong><br />
+        e.g. <code>[aeiou]</code> matches any vowel
+      </li>
+      <li>
+        <code>(|)</code> stands for <strong>any enumerated string</strong><br />
+        e.g. <code>(ai|ei|ay|ey)</code> matches any of &quot;ai&quot;, &quot;ei&quot;, &quot;ay&quot;, &quot;ey&quot; (<code>|</code> meaning &quot;or&quot;)<br />
+        =&gt; don&apos;t know how to write Dewey? ;-) try this one <a href="%cgi_file%?db=lit&amp;query=Dew(ay|ai|ey|ei)&amp;case_sensitive=1&amp;regexp=1&amp;truncated=1&amp;action=get_results"><samp>Dew(ai|ei|ay|ey)</samp></a>
+      </li>
+      <li>
+        <code>*</code> repeats the previous symbol <strong>zero or more</strong> times
+      </li>
+      <li>
+        <code>?</code> repeats the previous symbol <strong>zero or one</strong> time
+      </li>
+      <li>
+        <code>+</code> repeats the previous symbol <strong>one or more</strong> times
+      </li>
+      <li>
+        this makes <code>.*</code> working as the well-known <strong>truncation</strong><br />
+        =&gt; <a href="%cgi_file%?db=lit&amp;query=Indexierung.*&amp;case_sensitive=1&amp;regexp=1&amp;action=get_results"><samp>Indexierung.*</samp></a> finds anything beginning with &quot;Indexierung&quot;
+      </li>
+      <li>
+        <code>()</code> <strong>groups</strong> characters<br />
+        e.g. <code>(ierung)?</code> matches &quot;ierung&quot; at most once<br />
+        =&gt; so <a href="%cgi_file%?db=lit&amp;query=Index(ierung)?&amp;case_sensitive=1&amp;regexp=1&amp;action=get_results"><samp>Index(ierung)?</samp></a> searches for &quot;Index&quot; or &quot;Indexierung&quot;
+      </li>
+      <li>
+        <code>(?i:<var title="%tt_string%">string</var>)</code> makes <var title="%tt_string%">string</var> matching <strong>case-insensitive</strong><br />
+        (while this is the default behaviour you can use <code>(?-i:<var title="%tt_string%">string</var>)</code> to match <strong>case-sensitive</strong>ly)
+      </li>
+      <li>
+        ...
+      </li>
+    </ul>
+    <br />
+    for more information see:<br />
+    <ul>
+      <li><a class="ext" href="http://en.wikipedia.org/wiki/Regular_expression">wp:regular expression</a> - from wikipedia, the free encyclopedia</li>
+      <li><a class="ext" href="http://zez.org/article/articleprint/11/">regular expressions explained</a> - a slightly outdated tutorial</li>
+      <li><a class="ext" href="http://www.erudil.com/preqr.pdf">perl regular expression quick reference</a> [pdf]</li>
+      <li class="hidden"></li>
+      <li>you might also want to have a look at the respective subroutine in the source code: <a href="%cgi_file%?action=view_source#get_results-">get_results</a></li>
+    </ul>
+    <a href="#toc" class="toc_ref">^toc</a>
+    <br />
+    <br />
+    <h2><a name="options">options</a></h2>
+    <ul>
+      <li>
+        <strong>regular expression</strong><br />
+        <a class="help_me" href="#regular_expressions">regular expressions</a> provide powerful means for query formulation, but since it&apos;s (about 50%) faster to use &quot;fixed strings&quot; you need to explicitly toggle the &quot;regular expression&quot; option.<br />
+        (NB: the &quot;end-truncated&quot; and &quot;case-sensitive&quot; options imply &quot;regular expression&quot;!)
+      </li>
+      <li>
+        <strong>end-truncated</strong><br />
+        ...
+      </li>
+      <li>
+        <strong>case-sensitive</strong><br />
+        ...
+      </li>
+    </ul>
+    <a href="#toc" class="toc_ref">^toc</a>
+    <div class="footnotes">
+      <table>
+        <tr>
+          <td>[<a name="footnote_1" href="#footnote_href_1">1</a>]</td>
+          <td>strictly speaking, this only applies to boolean AND-queries, but the problem with OR-queries is that they lack any information on the result&apos;s relevance, the relevant results are simply scattered around the results list (actually, a <i>ranked query</i> - in its simplest form - is a boolean OR-query <em>with relevance ranking</em>)</td>
+        </tr>
+        <tr>
+          <td>[<a name="footnote_2" href="#footnote_href_2">2</a>]</td>
+          <td>
+            for a comprehensive survey see: <span class="litref">saracevic: <a class="ext" href="http://www.scils.rutgers.edu/~tefko/Saracevic_relevance_75.pdf">relevance: a review of and a framework for the thinking on the notion in information science</a></span> [pdf]<br />
+            probabilistic ir: <span class="litref">crestani et al.: <a class="ext" href="http://portal.acm.org/ft_gateway.cfm?id=299920&amp;type=pdf">&quot;Is this document relevant? ... probably&quot;: a survey of probabilistic models in information retrieval</a></span> [pdf]
+          </td>
+        </tr>
+        <tr>
+          <td>[<a name="footnote_3" href="#footnote_href_3">3</a>]</td>
+          <td>
+            <span class="litref">lepsky: <a class="ext" href="http://www.iws.fh-koeln.de/institut/personen/lepsky/skript-3d-automatische-indexierung-linguistik-statistik-04.pdf">skript automatische indexierung - linguistische und statistische verfahren</a></span> [pdf] - especially <a class="ext" href="http://www.iws.fh-koeln.de/institut/personen/lepsky/skript-3d-automatische-indexierung-linguistik-statistik-04.pdf#page=64">ch. 4</a><br />
+            <span class="litref">larson: <a class="ext" href="http://www.sims.berkeley.edu/courses/is202/f98/Lecture17/">term weighting and ranking algorithms</a></span><br />
+            not to mention: <span class="litref">salton and buckley: <a class="ext" href="http://dx.doi.org/10.1016/0306-4573(88)90021-0">term weighting approaches in automatic text retrieval</a>. in: <a class="ext" href="http://www.sciencedirect.com/science/journal/03064573">information processing &amp; management</a> vol. 24, no. 5, pp. 513-523, 1988</span> (unfortunately not available online - unless your library got a suitable subscription)
+          </td>
+        </tr>
+        <tr>
+          <td>[<a name="footnote_4" href="#footnote_href_4">4</a>]</td>
+          <td><span class="litref">lohmann: KASCADE: dokumentanreicherung und automatische Inhaltserschlie&#223;ung - projektbericht und ergebnisse des retrievaltests. d&#252;sseldorf, 2000. (<a class="ext" href="http://www.ub.uni-duesseldorf.de/ueber_uns/schriften/">Schriften der universit&#228;ts- und landesbibliothek d&#252;sseldorf</a>; 31)</span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><span style="font-size: 120%;">*</span></td>
+          <td>and of course the <em>lir.pl</em> databases <a href="%cgi_file%?db=lir">&quot;lir&quot;</a> and <a href="%cgi_file%?db=lit">&quot;literatur zur inhaltserschlie&#223;ung&quot;</a> offer a lot of references about these and related topics!</td>
+        </tr>
+      </table>
+    </div> <!-- class="footnotes" -->
+  </div> <!-- class="help" -->
+<TMPL_INCLUDE name="compact_menu.inc">
+<TMPL_INCLUDE name="footer.inc">
+</body>
+</html>

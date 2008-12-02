@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Strict//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="content-type" content="%content_type%; charset=UTF-8"></meta>
+  <link rel="stylesheet" type="text/css" href="/cgi-bin/parse_css.pl?local=%css_file%"></link>
+  <title>%heading%</title>
+  <script type="text/javascript">
+  var n = "#F0F0F0";
+  var h = "silver";
+
+  function highlight(id) {
+    var e = document.getElementById("step" + id);
+    e.style.backgroundColor = (e.style.backgroundColor == h) ? n : h;
+  }
+  </script>
+</head>
+<body id="form">
+  <h1 class="heading">%heading%</h1>
+<TMPL_INCLUDE name="index_menu.inc">
+  <div class="query_form">
+  <TMPL_UNLESS name="summary">
+    <table width="100%">
+      <tr>
+        <td width="60%">
+          <form action="%cgi_file%" method="post" enctype="multipart/form-data">
+            <TMPL_UNLESS name="collection_ok">
+            <input type="hidden" name="action" value="start"></input>
+            <table>
+              <tr>
+                <td class="form_label"><label for="input_id"><strong>id</strong></label>:</td>
+                <td colspan="3"><TMPL_IF name="missing_id"><span class="missing">collection id missing!</span><br /><TMPL_ELSE><TMPL_IF name="exists_collection"><span class="missing">collection already exists!<br />enter different id or resend form to overwrite.</span><input type="hidden" name="overwrite" value="%id%"></input><br /></TMPL_IF></TMPL_IF><input id="input_id" name="id" type="text" size="30" maxlength="10" value="%id%" onmouseover="highlight('1')" onmouseout="highlight('1')"></input></td>
+              </tr>
+              <tr>
+                <td class="form_label"><label for="input_name">name</label>:</td>
+                <td colspan="3"><input id="input_name" name="name" type="text" size="30" maxlength="30" value="%name%" onmouseover="highlight('2')" onmouseout="highlight('2')"></input></td>
+              </tr>
+              <tr>
+                <td class="form_label"><label for="input_desc">description</label>:</td>
+                <td colspan="3"><input id="input_desc" name="desc" type="text" size="30" maxlength="50" value="%desc%" onmouseover="highlight('3')" onmouseout="highlight('3')"></input></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td colspan="3"><hr /><input type="submit" value="submit"></input> <input type="reset" value="reset"></input></td>
+              </tr>
+            </table>
+            <TMPL_ELSE>
+            <input type="hidden" name="action" value="submit"></input>
+            <table>
+              <tr>
+                <td class="form_label"><strong>id</strong>:</td>
+                <td colspan="3"><TMPL_IF name="overwrite"><span class="missing">collection already exists, but will be overwritten!</span><input type="hidden" name="overwrite" value="%id%"></input><br /></TMPL_IF><strong>%id%<input type="hidden" name="id" value="%id%"></input></strong></td>
+              </tr>
+              <tr>
+                <td class="form_label">name:</td>
+                <td colspan="3">%name%<input type="hidden" name="name" value="%name%"></input></td>
+              </tr>
+              <tr>
+                <td class="form_label">description:</td>
+                <td colspan="3">%desc%<input type="hidden" name="desc" value="%desc%"></input></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td><hr /></td>
+              </tr>
+              <tr>
+                <td class="form_label"><label for="input_db_file"><strong>db file</strong></label>:</td>
+                <td><TMPL_IF name="missing_db_file"><span class="missing">db file missing!</span><br /></TMPL_IF><TMPL_IF name="cantread_db"><span class="missing">can&apos;t read db file!</span><br /></TMPL_IF><input id="input_db_file" name="db_file" type="file" size="30" maxlength="100000000" accept="text/*" onmouseover="highlight('4')" onmouseout="highlight('4')"></input></td> <!-- the "value" attribute is not supported for security reasons (http://de.selfhtml.org/html/formulare/datei_upload.htm#definieren) -->
+                <td><label for="select_db_encoding">encoding</label>:</td>
+                <td><select id="select_db_encoding" name="db_enc" size="1"><option selected="selected">cp850</option><option>iso-8859-1</option></select></td>
+              </tr>
+              <tr>
+                <td class="form_label"><strong><em>ranking files</em></strong></td>
+                <td colspan="3"><TMPL_IF name="missing_r_file"><span class="missing">ranking file missing!  (you need to provide at least one)</span></TMPL_IF><TMPL_IF name="cantread_r"><span class="missing">can&apos;t read ranking file!  (at least one of them)</span><br /></TMPL_IF></td>
+              </tr>
+              <TMPL_LOOP name="input_ranking_files">
+              <tr>
+                <td class="form_label"><label for="input_%id%_file">%name%</label>:</td>
+                <td><input id="input_%id%_file" name="r%id%_file" type="file" size="30" maxlength="100000000" accept="text/*" onmouseover="highlight('5')" onmouseout="highlight('5')"></input></td>
+                <td><label for="select_r%id%_encoding">encoding</label>:</td>
+                <td><select id="select_r%id%_encoding" name="r%id%_enc" size="1"><option>cp850</option><option selected="selected">iso-8859-1</option></select></td>
+              </tr>
+              </TMPL_LOOP>
+              <tr>
+                <td></td>
+                <td colspan="3"><hr /><input type="submit" value="submit" onmouseover="highlight('6')" onmouseout="highlight('6')"></input> <input type="reset" value="reset"></input></td>
+              </tr>
+            </table>
+            </TMPL_UNLESS>
+          </form>
+        </td>
+        <td width="40%">
+          <div class="search_tips">
+            <table>
+              <tr>
+                <td>
+                  <strong>quick instructions:</strong>
+                  <ol>
+                    <!-- <li><a class="help_me" href="%help_file%#???"></a></li> -->
+                    <li id="step1" <TMPL_IF name="collection_ok">style="color: grey"</TMPL_IF>>enter <strong>collection id</strong> (required!). make it short and memorable (ascii-only). e.g. <em>test</em><br />NOTE: if the collection already exists you can choose to overwrite it.</li>
+                    <li id="step2" <TMPL_IF name="collection_ok">style="color: grey"</TMPL_IF>>enter a name (should be short as well). defaults to collection id. e.g. <em>my test db</em></li>
+                    <li id="step3" <TMPL_IF name="collection_ok">style="color: grey"</TMPL_IF>>enter a description. defaults to collection name. e.g. <em>my test database (xxx records)</em></li>
+                    <hr />
+                    <li id="step4" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>specify <strong>db file</strong> (required!). <a href="/lir/lir-sample.db">sample file</a></li>
+                    <li id="step5" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>specify <u>at least one</u> <strong>ranking file</strong> (required!). <a href="/lir/lir-sample.idx">sample file</a></li>
+                    <li id="step6" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>submit your request - and <strong>please be patient</strong>. the program needs to upload the specified files and process them - only then will a summary be displayed.</li>
+                  </ol>
+                </td>
+              </tr>
+            </table>
+          </div> <!-- class="search_tips" -->
+        </td>
+      </tr>
+    </table>
+  <TMPL_ELSE>
+  <pre>%summary%</pre>
+  <table>
+  <tr><td><strong>&gt;</strong></td><td><strong>now view your newly created collection in <a href="%lir_pl%">lir.pl</a></strong></td></tr>
+  <tr><td></td><td><small>in the future it can be accessed by its id <strong>&apos;lab/%id%&apos;</strong></small></td></tr>
+  </table>
+  </TMPL_UNLESS>
+  </div> <!-- class="query_form" -->
+<TMPL_INCLUDE name="index_menu.inc">
+<TMPL_INCLUDE name="footer.inc">
+</body>
+</html>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Strict//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="%content_type%; charset=UTF-8"></meta>
+  <link rel="stylesheet" type="text/css" href="/cgi-bin/parse_css.pl?local=%css_file%"></link>
+  <title>%heading%</title>
+</head>
+<body>
+  <h1 class="heading">%heading%</h1>
+
+<tmpl_include name="footer.inc">
+</body>
+</html>

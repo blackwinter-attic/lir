@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Strict//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8"></meta>
+  <link rel="stylesheet" type="text/css" href="/cgi-bin/parse_css.pl?local=/lir/lir.css"></link>
+  <title>lir - "lehr- und lernsystem information retrieval"</title>
+</head>
+<body class="home">
+  <h1 class="heading">lir - "lehr- und lernsystem information retrieval"</h1>
+  <em>lir</em> is an experimental retrieval environment to teach/learn information retrieval concepts. it&apos;s designed to be highly configurable and parametrisable.<br />
+  <br />
+  <em>lir.pl</em> is the retrieval front-end:<br />
+  <strong>&gt; <a href="/lir/cgi-bin/lir.pl">lir.pl</a></strong><br />
+  <br />
+  <em>lir_index.pl</em> is the web-frontend for creating indexes for <em>lir.pl</em><br />
+  <strong>&gt; <a href="/lir/cgi-bin/lir_index.pl">lir_index.pl</a></strong> <em>(restricted access)</em><br />
+  <div class="footer">
+    <table>
+      <tr>
+        <td class="left">
+          <span class="lir_mtime">last modified <!--#echo var="LAST_MODIFIED" --></span> -- any feedback appreciated: jens wille <span class="email">jens.wille at gmail.com</span><br />
+          [ <em><a href="/">home page</a></em> ]
+        </td>
+        <td class="middle"></td>
+        <td class="right">
+          <span class="w3_validator"><a href="http://validator.w3.org/check?uri=referer"><img src="images/valid-xhtml11.gif" alt="Valid XHTML 1.1!" title="Valid XHTML 1.1!" /></a></span>
+          <span class="w3_validator"><a href="http://jigsaw.w3.org/css-validator/"><img src="images/valid-css.gif" alt="Valid CSS!" title="Valid CSS!" /></a></span>
+        </td>
+      </tr>
+    </table>
+  </div> <!-- class="footer" -->
+</body>
+</html>

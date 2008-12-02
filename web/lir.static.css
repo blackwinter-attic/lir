@@ -1,0 +1,380 @@
+/*
+  !!! THIS IS THE STATIC VERSION !!!
+
+  *** variable declaration (ignored) ***
+
+  * colors *
+  #black#     = #000000;
+  #dark#      = #A0A0A0;
+  #medium#    = #D0D0D0;
+  #light#     = #F0F0F0;
+  #white#     = #FFFFFF;
+  #red#       = #FF0000;
+
+  * font-sizes *
+  #larger#    = larger;
+  #largest#   = 180%;
+  #smaller#   = smaller;
+
+  * borders *
+  #my_border# = dotted;
+  #my_width#  = 2px;
+
+  * paddings *
+  ...
+
+  * margins *
+  ...
+
+  *** /variable declaration/ ***
+*/
+
+/*** general ***/
+
+.hidden {
+  visibility:       hidden;
+}
+
+.inline {
+  display:          inline;
+}
+
+.left {
+  text-align:       left;
+}
+
+.right {
+  text-align:       right;
+}
+
+.hint {
+  font-weight:      bold;
+  padding:          5px;
+  border:           solid 2px #FF0000;
+}
+
+h2 {
+  font-size:        larger;
+}
+
+td {
+  text-align:       left;
+  vertical-align:   top;
+}
+
+li {
+  margin:           2px;
+}
+
+code, samp {
+  font-family:      monospace;
+  font-size:        100%;
+}
+
+var {
+  font-family:      monospace;
+  font-style:       normal;
+  text-transform:   uppercase;
+  border-bottom:    dotted 1px;
+}
+
+/*** heading ***/
+
+h1.heading {
+  padding:          5px 10px;
+  border:           dotted 2px #A0A0A0;
+  font-size:        180%;
+}
+
+/*** external links ***/
+
+a.ext {
+  text-decoration:  none;
+  border-bottom:    dashed 1px;
+}
+
+/*a.ext:hover:before {
+  content:          ">> ";
+  font-size:        smaller;
+}*/
+
+/*** help links ***/
+
+a.help_me {
+  color:            inherit;
+  text-decoration:  none;
+  cursor:           help;
+}
+
+a.help_me:after {
+  content:          "?";
+  vertical-align:   super;
+  color:            blue;
+  text-decoration:  underline;
+}
+
+/*** footnotes/references ***/
+
+.footnotes {
+  margin-top:       50px;
+  padding-top:      10px;
+  border-top:       solid 2px #000000;
+}
+
+.litref {
+  font-variant:     small-caps;
+  text-transform:   capitalize;
+  font-size:        smaller;
+}
+
+/*** home page ***/
+
+body.home {
+  padding:          0px 30px;
+}
+
+body.home h1.heading {
+  padding:          10px;
+  background-color: #A0A0A0;
+  font-size:        180%;
+  text-align:       center;
+}
+
+/*** query form ***/
+
+.form, .query_form, .help {
+  padding:          10px;
+  background-color: #A0A0A0;
+}
+
+.form_label {
+  width:            100px;
+  white-space:      nowrap;
+  text-align:       right;
+  padding-right:    5px;
+}
+
+/*** db info ***/
+
+.db_info {
+  display:          block;
+  margin-left:      35px;
+  padding:          5px 10px;
+  background-color: #F0F0F0;
+  border:           dotted 2px #A0A0A0;
+  font-weight:      bold;
+}
+
+/*** search tips ***/
+
+.search_tips {
+  margin-left:      35px;
+  padding:          5px 10px;
+  background-color: #F0F0F0;
+  border:           dotted 2px #A0A0A0;
+}
+
+.search_tips ul, .search_tips ol {
+  font-size:        smaller;
+  padding-left:     15px;
+}
+
+.search_tips var, .search_tips samp {
+  font-size:        larger;
+}
+
+/*** result list + record display ***/
+
+.results_table td {
+  padding:          1px 3px;
+  text-align:       left;
+  white-space:      nowrap;
+}
+
+.results_table td.long_text {
+  white-space:      normal;
+  width:            100%;
+}
+
+.results_table td.cat_desc {
+  text-align:       right;
+}
+
+/*** record display ***/
+
+.more_like_this {
+  padding:          2px;
+  background-color: #F0F0F0;
+  border:           dotted 2px #A0A0A0;
+}
+
+/*** help ***/
+
+.help_toc {
+  padding:          10px;
+  margin-left:      20px;
+  background-color: #D0D0D0;
+  border:           dotted 2px #A0A0A0;
+}
+
+.small_toc {
+  font-size:        smaller;
+}
+
+.help_toc td {
+  padding:          2px 10px;
+}
+
+.help_toc .toc_item {
+  font-weight:      bold;
+  text-decoration:  none;
+}
+
+.help_toc .toc_item a, .small_toc a {
+  text-decoration:  none;
+  color:            #000000;
+}
+
+.help_toc .toc_item a:hover, .small_toc a:hover {
+  color:            #D0D0D0;
+  background-color: #000000;
+}
+
+.toc_ref {
+  text-decoration:  none;
+  color:            #000000;
+  font-size:        small;
+  font-weight:      bold;
+}
+
+.toc_ref:hover {
+  color:            #D0D0D0;
+}
+
+.legend .heading {
+  margin-left:      28px;
+  font-weight:      bold;
+}
+
+.legend td {
+  font-family:      monospace;
+  padding:          0px 25px;
+}
+
+.algorithms li {
+  margin-top:       10px;
+}
+
+.algorithm {
+  font-family:      monospace;
+  line-height:      180%;
+}
+
+.algorithm .formula {
+  font-weight:      bold;
+  background-color: #D0D0D0;
+  padding:          6px 8px;
+  line-height:      220%;
+  border:           solid 1px #000000;
+}
+
+.algorithm .with {
+  margin-left:      20px;
+}
+
+/*** missing (-> index) ***/
+
+.missing {
+  color:            red;
+  font-size:        smaller;
+}
+
+/*** menu ***/
+
+.menu {
+  margin-top:       15px;
+  text-align:       right;
+  background-color: #FFFFFF;
+}
+
+.menu span {
+  padding:          3px;
+}
+
+body#query   .menu .query,
+body#results .menu .results,
+body#records .menu .records {
+  background-color: #A0A0A0;
+}
+
+.menu a {
+  color:            #000000;
+  text-decoration:  none;
+  font-weight:      bold;
+}
+
+.menu a:hover {
+  color:            #D0D0D0;
+}
+
+.menu .go_xxx:before {
+  content:          "[ ";
+}
+
+.menu .go_xxx:after {
+  content:          " ]";
+}
+
+/*** footer ***/
+
+.footer {
+  border-top:       solid 3px #A0A0A0;
+  padding-top:      4px;
+  text-align:       left;
+}
+
+body.home .footer {
+  margin-top:       30px;
+}
+
+.footer table, .menu table {
+  width:            100%;
+}
+
+.lir_seconds {
+  font-family:      monospace;
+  font-size:        smaller;
+  color:            #A0A0A0;
+}
+
+.tmpl_mtime {
+  font-size:        smaller;
+  color:            #A0A0A0;
+}
+
+.email {
+  font-family:      monospace;
+}
+
+.email:before {
+  content:          "<";
+}
+
+.email:after {
+  content:          ">";
+}
+
+.w3_validator a {
+  border:           0px;
+}
+
+.w3_validator a.ext:hover:before {
+  content:          "";
+}
+
+.w3_validator a img {
+  height:           31px;
+  width:            88px;
+  border:           dotted 2px #A0A0A0;
+  margin-left:      6px;
+}

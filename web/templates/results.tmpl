@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Strict//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="content-type" content="%content_type%; charset=UTF-8"></meta>
+  <link rel="stylesheet" type="text/css" href="/cgi-bin/parse_css.pl?local=%css_file%"></link>
+  <title>%heading%</title>
+</head>
+<body id="results">
+  <h1 class="heading">%heading%</h1>
+<TMPL_INCLUDE name="menu.inc">
+<TMPL_INCLUDE name="compact_query_form.inc">
+  <div class="form">
+    <div class="results_table">
+    <TMPL_IF name="results">
+      <span class="form_heading">displaying result%result_s% <strong>%from_to%</strong> (<strong>%result_num%</strong> of <strong>%of%</strong> result%max_result_s%)</span><br />
+      <br />
+      <form action="%cgi_file%" method="get">
+        <input type="hidden" name="action" value="re_rank"></input>
+        <TMPL_LOOP name="re_rank_args">
+        <input type="hidden" name="%arg%" value='%value%'></input>
+        </TMPL_LOOP>
+        <label for="select_re_ranking">select ranking:</label>
+        <select id="select_re_ranking" name="re_ranking" size="1">
+          <TMPL_LOOP name="select_ranking">
+          <option value="%id%" %selected% %disabled%>%name%</option>
+          </TMPL_LOOP>
+        </select>
+        <label for="input_re_ranking_threshold">and threshold:</label>
+        <input id="input_re_ranking_threshold" type="text" size="6" maxlength="6" name="threshold" value="%my_threshold%"></input>
+        <input type="submit" value="re-rank"></input>
+      </form>
+      <form action="%cgi_file%" method="get">
+        <!-- <input type="hidden" name="action" value="show_records"></input> -->
+        <TMPL_LOOP name="view_args">
+        <input type="hidden" name="%arg%" value='%value%'></input>
+        </TMPL_LOOP>
+        <table>
+          <tr>
+            <td colspan="6">
+              <input type="submit" name="action" value="view"></input> <input type="submit" name="action" value="search similar"></input>
+            </td>
+          </tr>
+          <TMPL_IF name="less">
+          <tr style="line-height: 25%;">
+            <td></td>
+            <td><br /><small><a href="%cgi_file%?%prev_args%" title="display previous %pdiff%!">-%pdiff%</a></small><br /><br /></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          </TMPL_IF>
+          <TMPL_LOOP name="results">
+          <tr>
+            <td><input type="checkbox" name="record_num" value="%docnum%"></input></td>
+            <td>%result_num%</td>
+            <td><a href="%cgi_file%?%my_query_string%">%my_id%</a></td>
+            <td>%weight%</td>
+            <td> &gt; </td>
+            <td class="long_text">%title% <strong>[ %matches% ]</strong></td>
+          </tr>
+          </TMPL_LOOP>
+          <TMPL_IF name="more">
+          <tr style="line-height: 25%;">
+            <td></td>
+            <td><small><a href="%cgi_file%?%next_args%" title="display next %ndiff%!">+%ndiff%</a></small><br /><br /><br /></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          </TMPL_IF>
+          <tr>
+            <td colspan="6">
+              <input type="submit" name="action" value="view"></input> <input type="submit" name="action" value="search similar"></input>
+            </td>
+          </tr>
+        </table>
+      </form>
+    <TMPL_ELSE> <!-- name="results" -->
+      <div class="hint">
+      <TMPL_IF name="no_query">
+        please enter query! (back to <a href="%cgi_file%?db=%my_db%">query form</a>)
+      <TMPL_ELSE>
+        <TMPL_UNLESS name="similar">
+          sorry, your query didn&apos;t return any results!<br />
+          <br />
+          try one or more of the following to improve your query:<br />
+          <ul type="square">
+            <li>check your spelling</li>
+            <li>omit boolean operators (<code>+</code> and <code>-</code>)</li>
+            <li>omit limiting options (e.g. case-sensitive)</li>
+            <li>reconsider your threshold value</li>
+            <li>try different query terms</li>
+            <li>try <a class="help_me" href="%help_file%#regular_expressions">regular expressions</a> ;-) (don&apos;t forget to toggle the &quot;regular expression&quot; option)</li>
+            <li class="hidden"></li>
+            <li>...finally, take into account that this database might just not cover the subject you are looking for</li>
+          </ul>
+        <TMPL_ELSE>
+          please select relevant record(s)!
+        </TMPL_UNLESS>
+      </TMPL_IF>
+      </div> <!-- class="hint" -->
+    </TMPL_IF> <!-- name="results" -->
+    </div> <!-- class="results_table" -->
+  </div> <!-- class="form" -->
+<TMPL_INCLUDE name="menu.inc">
+<TMPL_INCLUDE name="footer.inc">
+</body>
+</html>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Strict//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="content-type" content="%content_type%; charset=UTF-8"></meta>
+  <link rel="stylesheet" type="text/css" href="/cgi-bin/parse_css.pl?local=%css_file%"></link>
+  <title>%heading%</title>
+</head>
+<body id="records">
+  <h1 class="heading">%heading%</h1>
+<TMPL_INCLUDE name="menu.inc">
+<TMPL_INCLUDE name="compact_query_form.inc">
+  <div class="form">
+    <div class="results_table">
+      <TMPL_IF name="records">
+      <form action="%cgi_file%" method="get">
+        <input type="hidden" name="action" value="search_similar"></input>
+        <TMPL_LOOP name="similar_args">
+        <input type="hidden" name="%arg%" value='%value%'></input>
+        </TMPL_LOOP>
+        <table>
+          <tr>
+            <td colspan="6">
+              <input type="submit" value="search similar"></input>
+            </td>
+          </tr>
+          <tr>
+            <td><br /></td>
+          </tr>
+          <TMPL_LOOP name="records">
+          <tr>
+            <td><input type="checkbox" name="record_num" value="%record_num%"></input> <strong>%record_num%</strong>:<br /><br /></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <TMPL_LOOP name="cats">
+          <tr>
+            <td class="cat_desc">%desc%:</td>
+            <td class="long_text">%content%</td>
+            <td></td>
+          </tr>
+          </TMPL_LOOP>
+          <tr>
+            <td><br /></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td colspan="2"><em>weighted terms:</em></td>
+            <td></td>
+          </tr>
+          <TMPL_LOOP name="wterms">
+          <tr>
+            <td class="cat_desc"><strong>%ranking_algorithm%</strong> (%num%):</td>
+            <td class="long_text"><TMPL_LOOP name="terms">%term% {%weight%}<TMPL_UNLESS name="__last__"> <strong>||</strong> </TMPL_UNLESS></TMPL_LOOP></td>
+            <td><TMPL_IF name="mlt_args"><span class="more_like_this"><a href="%cgi_file%?%mlt_args%">more like this!</a></span></TMPL_IF></td>
+          </tr>
+          </TMPL_LOOP>
+          <tr>
+            <td colspan="3"><TMPL_UNLESS name="__last__"><hr /></TMPL_UNLESS></td>
+          </tr>
+          </TMPL_LOOP>
+          <tr>
+            <td><br /></td>
+          </tr>
+          <tr>
+            <td colspan="6">
+              <input type="submit" value="search similar"></input>
+            </td>
+          </tr>
+        </table>
+      </form>
+      <TMPL_ELSE>
+      <div class="hint">please select record(s) to display!</div>
+      </TMPL_IF>
+    </div> <!-- class="results_table" -->
+  </div> <!-- class="form" -->
+<TMPL_INCLUDE name="menu.inc">
+<TMPL_INCLUDE name="footer.inc">
+</body>
+</html>
