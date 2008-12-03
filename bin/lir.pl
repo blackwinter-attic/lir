@@ -2,7 +2,7 @@
 
 ###############################################################################
 #                                                                             #
-# lir_test.pl -- test access on lir indexes                                   #
+# lir.pl -- query lir indexes (console version)                               #
 #                                                                             #
 # A component of lir, the experimental information retrieval environment.     #
 #                                                                             #
