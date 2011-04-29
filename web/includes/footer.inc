@@ -4,7 +4,7 @@
     <table>
       <tr>
         <td class="left">
-          <em>%basename%</em> version %version% (view <a href="%cgi_file%?action=view_source">source code</a>) -- released under the <a class="ext" href="http://www.gnu.org/licenses/licenses.html#GPL">gpl</a><br />
+          <em>%basename%</em> version %version% (view <a href="%cgi_file%?action=view_source">source code</a>) -- released under the <a class="ext" href="http://www.gnu.org/licenses/licenses.html#AGPL">AGPL</a><br />
           last modified %mtime% -- any feedback appreciated: jens wille <span class="email">jens.wille at gmail.com</span>
         </td>
         <td class="right">
