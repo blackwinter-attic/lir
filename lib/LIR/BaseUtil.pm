@@ -38,7 +38,7 @@ our %EXPORT_TAGS = (
     mtime tie_index untaint_var
   )],
   cons => [qw(
-    FALSE TRUE $MY_MODULES
+    FALSE TRUE
   )]
 );
 our @EXPORT_OK   = map(@{$_} => values %EXPORT_TAGS);
@@ -58,9 +58,6 @@ use Fcntl;
 
 use constant FALSE => 0;
 use constant TRUE  => !FALSE;
-
-# my modules
-our $MY_MODULES = 'GlobalConfig|LirConfig|IndexConfig|BaseUtil|ExtUtil|CGI|DB';
 
 ### /constants/
 

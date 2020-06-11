@@ -34,9 +34,9 @@ our @ISA         = qw(Exporter);
 our %EXPORT_TAGS = (
   vars => [qw(
     %CGI_DFLTS %DB $PROGNAME $BASENAME $LIR_PL
-    $BASE_DIR $CGI_BIN $CGI_FILE $CSS_FILE $SRC_DIR
+    $BASE_DIR $CGI_BIN $CGI_FILE $CSS_FILE
     $HOME_FILE $HELP_FILE $PREF_FILE
-    $DATA $LAB $LAB_DATA $WEB $SOURCES $HELP_HTML $SOURCE_CSS
+    $DATA $LAB $LAB_DATA $WEB $HELP_HTML
     $GID $TEMPLATES $INCLUDES $CONTENT_TYPE
     %DB %RANKING %CAT_DESC
   )],
@@ -82,7 +82,6 @@ our $BASE_DIR  = '/lir';
 our $CGI_BIN   = catfile($BASE_DIR, 'cgi-bin');
 our $CGI_FILE  = catfile($CGI_BIN,  $BASENAME);
 our $CSS_FILE  = catfile($BASE_DIR, 'lir.css');
-our $SRC_DIR   = catfile($BASE_DIR, 'sources');
 
 our $HOME_FILE = catfile($BASE_DIR, '');
 our $HELP_FILE = $CGI_FILE . '?action=help';
@@ -93,9 +92,6 @@ our $DATA       = '../data';
 our $LAB        = 'lab';
 our $LAB_DATA   = catfile($DATA, $LAB);
 our $WEB        = '../web';
-our $SOURCES    = catfile($WEB, 'sources');
-
-our $SOURCE_CSS = catfile($WEB, 'lir_source.css');
 
 # group to own files (symbolic name)
 our $GID = scalar getgrnam('lirwww') || scalar getgrnam('lir') || -1;

@@ -41,7 +41,6 @@ use lib '../lib';
 use LIR::GlobalConfig     qw(:vars :cons idx2rec);
 use LIR::IndexConfig      qw(:vars);
 use LIR::BaseUtil         qw(:subs :cons);
-use LIR::ExtUtil          qw(:subs);
 
 use LIR::CGI;
 
@@ -95,11 +94,10 @@ $cgi->parse_query;
 
 # get action to perform
 my %action = (
-  'help'        => sub { tmpl_action(); },
-  'view_source' => sub { print view_source($cgi->arg('file')); },
-  'start'       => sub { start(); },
-  'submit'      => sub { submit(); },
-  'default'     => sub { tmpl_action(); }
+  'help'    => sub { tmpl_action(); },
+  'start'   => sub { start(); },
+  'submit'  => sub { submit(); },
+  'default' => sub { tmpl_action(); }
 );
 
 my $my_action = defined $action{$cgi->action} ? $cgi->action : 'default';

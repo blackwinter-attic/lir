@@ -43,7 +43,6 @@ use lib '../lib';
 use LIR::GlobalConfig     qw(:vars :cons);
 use LIR::LirConfig        qw(:vars);
 use LIR::BaseUtil         qw(:subs :cons);
-use LIR::ExtUtil          qw(:subs);
 
 use LIR::CGI;
 use LIR::DB;
@@ -122,7 +121,6 @@ my %action = (
   're_rank'        => sub { re_rank();        },
   'search_similar' => sub { search_similar(); },
   'help'           => sub {},
-  'view_source'    => sub {},
   'default'        => sub {}
 );
 
@@ -132,53 +130,47 @@ $cgi->action('search_similar') if $cgi->action eq 'search similar';
 
 my $my_action = defined $action{$cgi->action} ? $cgi->action : 'default';
 
-if ($my_action =~ m{\A(?:view_source)\z}) {
-  print view_source($cgi->arg('file'));
+$tmpl = HTML::Template->new('filename'                    => $TMPL{$my_action},
+                            'vanguard_compatibility_mode' => 1,
+                            # NOTE: HTML/Template.pm:1991 (2.95):
+                            # $self->{template} =~ s/%(\w+)%/<TMPL_VAR NAME=$1>/g;
+                            #                         ^^^^^
+                            # in order to prevent HTML::Template from trying to
+                            # substitute constructs like:
+                            # query=%2Bindexierung+ranking.*%231.5+automatisch%23-1.5+-thesaurus
+                            #       ^^^^^^^^^^^^^^^^^^^^^^^^^
+                            'loop_context_vars'           => 1,
+                            'global_vars'                 => 1)
+  or die "can't get template for action $my_action!\n";
+
+$tmpl_params{$my_action}   = 1;
+$tmpl_params{'mtime'}      = mtime();
+$tmpl_params{'tmpl_mtime'} = mtime($TMPL{$my_action});
+
+unless ($my_action =~ m{\A(?:help)\z}) {
+  # create new db object
+  $db = LIR::DB->new($cgi->db) || LIR::DB->new($cgi->dflt('db'))
+    or die "can't open db!\n";
+
+  # to be on the safe side ;-)
+  $cgi->db($db->id);
+
+  # perform action
+  &{$action{$my_action}};
+
+  prepare_output();
 }
 else {
-  # get template
-  $tmpl = HTML::Template->new('filename'                    => $TMPL{$my_action},
-                              'vanguard_compatibility_mode' => 1,
-                              # NOTE: HTML/Template.pm:1788:
-                              # $self->{template} =~ s/%(\w+)%/<TMPL_VAR NAME=$1>/g;
-                              #                         ^^^^^
-                              # in order to prevent HTML::Template from trying to
-                              # substitute constructs like:
-                              # query=%2Bindexierung+ranking.*%231.5+automatisch%23-1.5+-thesaurus
-                              #       ^^^^^^^^^^^^^^^^^^^^^^^^^
-                              'loop_context_vars'           => 1,
-                              'global_vars'                 => 1)
-    or die "can't get template for action $my_action!\n";
-
-  $tmpl_params{$my_action}   = 1;
-  $tmpl_params{'mtime'}      = mtime();
-  $tmpl_params{'tmpl_mtime'} = mtime($TMPL{$my_action});
-
-  unless ($my_action =~ m{\A(?:help)\z}) {
-    # create new db object
-    $db = LIR::DB->new($cgi->db) || LIR::DB->new($cgi->dflt('db'))
-      or die "can't open db!\n";
-
-    # to be on the safe side ;-)
-    $cgi->db($db->id);
-
-    # perform action
-    &{$action{$my_action}};
-
-    prepare_output();
-  }
-  else {
-    $tmpl_params{'heading'} = 'lir - ' . $my_action;
-  }
-
-  # send output to browser
-  print "Content-type: $CONTENT_TYPE\n\n";
-
-  $tmpl->param(%tmpl_params);
-  print $tmpl->output;
-
-  warningsToBrowser(1);
+  $tmpl_params{'heading'} = 'lir - ' . $my_action;
 }
+
+# send output to browser
+print "Content-type: $CONTENT_TYPE\n\n";
+
+$tmpl->param(%tmpl_params);
+print $tmpl->output;
+
+warningsToBrowser(1);
 
 # that's it ;-)
 exit 0;
@@ -292,6 +284,8 @@ sub get_results {
 
     my %seen = ();
     foreach my $match (@matching_terms) {
+      #next unless $match;
+
       my $termref = $term_index{$match};
       next unless $termref;                 # eliminate non-matching
       next if     $match =~ m{^__%.*%__$};  # reserved for internal use

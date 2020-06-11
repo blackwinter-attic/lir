@@ -31,8 +31,6 @@ LIR depends on some Perl modules and external programs. The following list names
 * libdatetime-perl
 * libmldbm-perl
 * pdl
-* perltidy
-* sed
 
 ### Web server configuration
 
@@ -63,7 +61,7 @@ Alias /lir /usr/local/lir/web
 </Files>
 ```
 
-The directories `web/sources` and `data/lab` have to be writable by the web server process.
+The directory `data/lab` has to be writable by the web server process.
 
 
 ## LINKS
