@@ -74,13 +74,11 @@ my %tmpl_params            = (
   'basename'     => $BASENAME,
   'heading'      => $HEADING,
   'content_type' => $CONTENT_TYPE,
-  'http_host'    => $ENV{'HTTP_HOST'},
   'cgi_file'     => $CGI_FILE,
   'home_file'    => $HOME_FILE,
   'help_file'    => $HELP_FILE,
   'css_file'     => $CSS_FILE,
-  'version'      => $VERSION,
-  'img_dir'      => $IMG_DIR
+  'version'      => $VERSION
 );
 
 # global vars

@@ -24,10 +24,7 @@
           [ <em><a href="/">home page</a></em> ]
         </td>
         <td class="middle"></td>
-        <td class="right">
-          <span class="w3_validator"><a href="http://validator.w3.org/check?uri=referer"><img src="images/valid-xhtml11.gif" alt="Valid XHTML 1.1!" title="Valid XHTML 1.1!" /></a></span>
-          <span class="w3_validator"><a href="http://jigsaw.w3.org/css-validator/"><img src="images/valid-css.gif" alt="Valid CSS!" title="Valid CSS!" /></a></span>
-        </td>
+        <td class="right"></td>
       </tr>
     </table>
   </div> <!-- class="footer" -->

@@ -34,7 +34,7 @@ our @ISA         = qw(Exporter);
 our %EXPORT_TAGS = (
   vars => [qw(
     %CGI_DFLTS %DB $PROGNAME $BASENAME $LIR_PL
-    $BASE_DIR $CGI_BIN $CGI_FILE $CSS_FILE $SRC_DIR $IMG_DIR
+    $BASE_DIR $CGI_BIN $CGI_FILE $CSS_FILE $SRC_DIR
     $HOME_FILE $HELP_FILE $PREF_FILE
     $DATA $LAB $LAB_DATA $WEB $SOURCES $HELP_HTML $SOURCE_CSS
     $GID $TEMPLATES $INCLUDES $CONTENT_TYPE
@@ -83,7 +83,6 @@ our $CGI_BIN   = catfile($BASE_DIR, 'cgi-bin');
 our $CGI_FILE  = catfile($CGI_BIN,  $BASENAME);
 our $CSS_FILE  = catfile($BASE_DIR, 'lir.css');
 our $SRC_DIR   = catfile($BASE_DIR, 'sources');
-our $IMG_DIR   = catfile($BASE_DIR, 'images');
 
 our $HOME_FILE = catfile($BASE_DIR, '');
 our $HELP_FILE = $CGI_FILE . '?action=help';
