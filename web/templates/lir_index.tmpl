@@ -6,14 +6,15 @@
   <meta http-equiv="content-type" content="%content_type%; charset=UTF-8"></meta>
   <link rel="stylesheet" type="text/css" href="%css_file%"></link>
   <title>%heading%</title>
+  <style type="text/css">
+    .highlight {
+      background-color: #C0C0C0;
+    }
+  </style>
   <script type="text/javascript">
-  var n = "#F0F0F0";
-  var h = "silver";
-
-  function highlight(id) {
-    var e = document.getElementById("step" + id);
-    e.style.backgroundColor = (e.style.backgroundColor == h) ? n : h;
-  }
+    function highlight(id) {
+      document.getElementById('step' + id).classList.toggle('highlight');
+    }
   </script>
 </head>
 <body id="form">
@@ -28,63 +29,71 @@
             <TMPL_UNLESS name="collection_ok">
             <input type="hidden" name="action" value="start"></input>
             <table>
-              <tr>
-                <td class="form_label"><label for="input_id"><strong>id</strong></label>:</td>
-                <td colspan="3"><TMPL_IF name="missing_id"><span class="missing">collection id missing!</span><br /><TMPL_ELSE><TMPL_IF name="exists_collection"><span class="missing">collection already exists!<br />enter different id or resend form to overwrite.</span><input type="hidden" name="overwrite" value="%id%"></input><br /></TMPL_IF></TMPL_IF><input id="input_id" name="id" type="text" size="30" maxlength="10" value="%id%" onmouseover="highlight('1')" onmouseout="highlight('1')"></input></td>
+              <tr onmouseover="highlight('1')" onmouseout="highlight('1')">
+                <td class="form_label"><label for="input_id"><strong>ID</strong></label>:</td>
+                <td colspan="3"><TMPL_IF name="missing_id"><span class="missing">Collection ID missing!</span><br /><TMPL_ELSE><TMPL_IF name="exists_collection"><span class="missing">Collection already exists!<br />Enter a different ID or resend form to overwrite.</span><input type="hidden" name="overwrite" value="%id%"></input><br /></TMPL_IF></TMPL_IF><input id="input_id" name="id" type="text" size="30" maxlength="10" value="%id%"></input></td>
               </tr>
-              <tr>
-                <td class="form_label"><label for="input_name">name</label>:</td>
-                <td colspan="3"><input id="input_name" name="name" type="text" size="30" maxlength="30" value="%name%" onmouseover="highlight('2')" onmouseout="highlight('2')"></input></td>
+              <tr onmouseover="highlight('2')" onmouseout="highlight('2')">
+                <td class="form_label"><label for="input_name">Name</label>:</td>
+                <td colspan="3"><input id="input_name" name="name" type="text" size="30" maxlength="30" value="%name%"></input></td>
               </tr>
-              <tr>
-                <td class="form_label"><label for="input_desc">description</label>:</td>
-                <td colspan="3"><input id="input_desc" name="desc" type="text" size="30" maxlength="50" value="%desc%" onmouseover="highlight('3')" onmouseout="highlight('3')"></input></td>
+              <tr onmouseover="highlight('3')" onmouseout="highlight('3')">
+                <td class="form_label"><label for="input_desc">Description</label>:</td>
+                <td colspan="3"><input id="input_desc" name="desc" type="text" size="30" maxlength="50" value="%desc%"></input></td>
               </tr>
               <tr>
                 <td></td>
-                <td colspan="3"><hr /><input type="submit" value="submit"></input> <input type="reset" value="reset"></input></td>
+                <td colspan="3"><hr /><input type="submit" value="Submit"></input> <input type="reset" value="Reset"></input></td>
               </tr>
             </table>
             <TMPL_ELSE>
             <input type="hidden" name="action" value="submit"></input>
             <table>
               <tr>
-                <td class="form_label"><strong>id</strong>:</td>
-                <td colspan="3"><TMPL_IF name="overwrite"><span class="missing">collection already exists, but will be overwritten!</span><input type="hidden" name="overwrite" value="%id%"></input><br /></TMPL_IF><strong>%id%<input type="hidden" name="id" value="%id%"></input></strong></td>
+                <td class="form_label"><strong>ID</strong>:</td>
+                <td colspan="3"><TMPL_IF name="overwrite"><span class="missing">Collection already exists, but will be overwritten!</span><input type="hidden" name="overwrite" value="%id%"></input><br /></TMPL_IF><strong>%id%<input type="hidden" name="id" value="%id%"></input></strong></td>
               </tr>
               <tr>
-                <td class="form_label">name:</td>
+                <td class="form_label">Name:</td>
                 <td colspan="3">%name%<input type="hidden" name="name" value="%name%"></input></td>
               </tr>
               <tr>
-                <td class="form_label">description:</td>
+                <td class="form_label">Description:</td>
                 <td colspan="3">%desc%<input type="hidden" name="desc" value="%desc%"></input></td>
               </tr>
               <tr>
                 <td></td>
                 <td><hr /></td>
               </tr>
-              <tr>
-                <td class="form_label"><label for="input_db_file"><strong>db file</strong></label>:</td>
-                <td><TMPL_IF name="missing_db_file"><span class="missing">db file missing!</span><br /></TMPL_IF><TMPL_IF name="cantread_db"><span class="missing">can&apos;t read db file!</span><br /></TMPL_IF><input id="input_db_file" name="db_file" type="file" size="30" maxlength="100000000" accept="text/*" onmouseover="highlight('4')" onmouseout="highlight('4')"></input></td> <!-- the "value" attribute is not supported for security reasons (http://de.selfhtml.org/html/formulare/datei_upload.htm#definieren) -->
-                <td><label for="select_db_encoding">encoding</label>:</td>
-                <td><select id="select_db_encoding" name="db_enc" size="1"><option selected="selected">cp850</option><option>iso-8859-1</option></select></td>
+              <tr onmouseover="highlight('4')" onmouseout="highlight('4')">
+                <td class="form_label"><label for="input_db_file"><strong>DB file</strong></label>:</td>
+                <td><TMPL_IF name="missing_db_file"><span class="missing">DB file missing!</span><br /></TMPL_IF><TMPL_IF name="cantread_db"><span class="missing">Can&apos;t read DB file!</span><br /></TMPL_IF><input id="input_db_file" name="db_file" type="file" size="30" maxlength="100000000" accept="text/*"></input></td> <!-- the "value" attribute is not supported for security reasons (http://de.selfhtml.org/html/formulare/datei_upload.htm#definieren) -->
+                <td><label for="select_db_encoding">Encoding</label>:</td>
+                <td><select id="select_db_encoding" name="db_enc" size="1">
+                  <option>UTF-8</option>
+                  <option>CP850</option>
+                  <option>ISO-8859-1</option>
+                </select></td>
               </tr>
               <tr>
-                <td class="form_label"><strong><em>ranking files</em></strong></td>
-                <td colspan="3"><TMPL_IF name="missing_r_file"><span class="missing">ranking file missing!  (you need to provide at least one)</span></TMPL_IF><TMPL_IF name="cantread_r"><span class="missing">can&apos;t read ranking file!  (at least one of them)</span><br /></TMPL_IF></td>
+                <td class="form_label"><strong><em>Ranking files</em></strong></td>
+                <td colspan="3"><TMPL_IF name="missing_r_file"><span class="missing">Ranking file missing! (You need to provide at least one)</span></TMPL_IF><TMPL_IF name="cantread_r"><span class="missing">Can&apos;t read ranking file! (At least one of them)</span><br /></TMPL_IF></td>
               </tr>
               <TMPL_LOOP name="input_ranking_files">
-              <tr>
+              <tr onmouseover="highlight('5')" onmouseout="highlight('5')">
                 <td class="form_label"><label for="input_%id%_file">%name%</label>:</td>
-                <td><input id="input_%id%_file" name="r%id%_file" type="file" size="30" maxlength="100000000" accept="text/*" onmouseover="highlight('5')" onmouseout="highlight('5')"></input></td>
-                <td><label for="select_r%id%_encoding">encoding</label>:</td>
-                <td><select id="select_r%id%_encoding" name="r%id%_enc" size="1"><option>cp850</option><option selected="selected">iso-8859-1</option></select></td>
+                <td><input id="input_%id%_file" name="r%id%_file" type="file" size="30" maxlength="100000000" accept="text/*"></input></td>
+                <td><label for="select_r%id%_encoding">Encoding</label>:</td>
+                <td><select id="select_r%id%_encoding" name="r%id%_enc" size="1">
+                  <option>UTF-8</option>
+                  <option>CP850</option>
+                  <option>ISO-8859-1</option>
+                </select></td>
               </tr>
               </TMPL_LOOP>
-              <tr>
+              <tr onmouseover="highlight('6')" onmouseout="highlight('6')">
                 <td></td>
-                <td colspan="3"><hr /><input type="submit" value="submit" onmouseover="highlight('6')" onmouseout="highlight('6')"></input> <input type="reset" value="reset"></input></td>
+                <td colspan="3"><hr /><input type="submit" value="Submit"></input> <input type="reset" value="Reset"></input></td>
               </tr>
             </table>
             </TMPL_UNLESS>
@@ -95,16 +104,16 @@
             <table>
               <tr>
                 <td>
-                  <strong>quick instructions:</strong>
+                  <strong>Quick instructions:</strong>
                   <ol>
                     <!-- <li><a class="help_me" href="%help_file%#???"></a></li> -->
-                    <li id="step1" <TMPL_IF name="collection_ok">style="color: grey"</TMPL_IF>>enter <strong>collection id</strong> (required!). make it short and memorable (ascii-only). e.g. <em>test</em><br />NOTE: if the collection already exists you can choose to overwrite it.</li>
-                    <li id="step2" <TMPL_IF name="collection_ok">style="color: grey"</TMPL_IF>>enter a name (should be short as well). defaults to collection id. e.g. <em>my test db</em></li>
-                    <li id="step3" <TMPL_IF name="collection_ok">style="color: grey"</TMPL_IF>>enter a description. defaults to collection name. e.g. <em>my test database (xxx records)</em></li>
+                    <li id="step1" <TMPL_IF name="collection_ok">style="color: grey"</TMPL_IF>>Enter <strong>Collection ID</strong> (required!). Make it short and memorable (ASCII-only). E.g. <em>test</em><br />NOTE: If the collection already exists you can choose to overwrite it.</li>
+                    <li id="step2" <TMPL_IF name="collection_ok">style="color: grey"</TMPL_IF>>Enter a name (should be short as well). Defaults to collection ID. E.g. <em>My test DB</em></li>
+                    <li id="step3" <TMPL_IF name="collection_ok">style="color: grey"</TMPL_IF>>Enter a description. Defaults to collection name. E.g. <em>My test database (xxx records)</em></li>
                     <hr />
-                    <li id="step4" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>specify <strong>db file</strong> (required!). <a href="lir-sample.db">sample file</a></li>
-                    <li id="step5" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>specify <u>at least one</u> <strong>ranking file</strong> (required!). <a href="lir-sample.idx">sample file</a></li>
-                    <li id="step6" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>submit your request - and <strong>please be patient</strong>. the program needs to upload the specified files and process them - only then will a summary be displayed.</li>
+                    <li id="step4" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>Specify <strong>DB file</strong> (required!). <a href="%home_file%files/lir-sample.db">Sample file</a></li>
+                    <li id="step5" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>Specify <u>at least one</u> <strong>Ranking file</strong> (required!). <a href="%home_file%files/lir-sample.idx">Sample file</a></li>
+                    <li id="step6" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>Submit your request - and <strong>please be patient</strong>. The program needs to upload the specified files and process them - only then will a summary be displayed.</li>
                   </ol>
                 </td>
               </tr>
@@ -116,8 +125,8 @@
   <TMPL_ELSE>
   <pre>%summary%</pre>
   <table>
-  <tr><td><strong>&gt;</strong></td><td><strong>now view your newly created collection in <a href="%lir_pl%">lir.pl</a></strong></td></tr>
-  <tr><td></td><td><small>in the future it can be accessed by its id <strong>&apos;lab/%id%&apos;</strong></small></td></tr>
+  <tr><td><strong>&gt;</strong></td><td><strong>Now view your newly created collection in <a href="%lir_pl%">lir.pl</a>.</strong></td></tr>
+  <tr><td></td><td><small>In the future, it can be accessed by its ID: <strong>lab/%id%</strong></small></td></tr>
   </table>
   </TMPL_UNLESS>
   </div> <!-- class="query_form" -->

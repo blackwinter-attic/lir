@@ -2,28 +2,28 @@
 
 ###############################################################################
 #                                                                             #
-# lir_index.pl -- web-frontend for creating indexes for lir.pl                #
+# lir_index.pl -- Web-frontend for creating indexes for lir.pl.               #
 #                                                                             #
-# A component of lir, the experimental information retrieval environment.     #
+# A component of LIR, the experimental information retrieval environment.     #
 #                                                                             #
-# Copyright (C) 2004-2011 Jens Wille                                          #
+# Copyright (C) 2004-2020 Jens Wille                                          #
 #                                                                             #
-# lir is free software: you can redistribute it and/or modify it under the    #
+# LIR is free software: you can redistribute it and/or modify it under the    #
 # terms of the GNU Affero General Public License as published by the Free     #
 # Software Foundation, either version 3 of the License, or (at your option)   #
 # any later version.                                                          #
 #                                                                             #
-# lir is distributed in the hope that it will be useful, but WITHOUT ANY      #
+# LIR is distributed in the hope that it will be useful, but WITHOUT ANY      #
 # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS   #
 # FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for     #
 # more details.                                                               #
 #                                                                             #
 # You should have received a copy of the GNU Affero General Public License    #
-# along with lir. If not, see <http://www.gnu.org/licenses/>.                 #
+# along with LIR. If not, see <http://www.gnu.org/licenses/>.                 #
 #                                                                             #
 ###############################################################################
 
-### modules + pragmas to _use_
+### modules + pragmas
 
 use strict;
 use warnings;
@@ -35,7 +35,7 @@ use CGI                   qw(param);
 use Encode                qw(from_to);
 use File::Spec::Functions qw(catfile);
 
-# my LIR modules
+# My LIR modules
 use lib '../lib';
 
 use LIR::GlobalConfig     qw(:vars :cons idx2rec);
@@ -44,27 +44,27 @@ use LIR::BaseUtil         qw(:subs :cons);
 
 use LIR::CGI;
 
-### /modules + pragmas to _use_/
+### /modules + pragmas/
 
 ### global variables + settings
 
-# untaint PATH
+# Untaint PATH
 $ENV{'PATH'} = '/bin:/usr/bin:/usr/local/bin';
 
-# make %ENV safer
+# Make %ENV safer
 delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 
-# categories
+# Categories
 my $cat_id  = '001';
 my $cat_tit = '020';
 
-# my indexes
+# My indexes
 my %records      = ();
 my %temp_records = ();
 my %index        = ();
 my %temp_index   = ();
 
-# my HTML::Template
+# My HTML::Template
 my $tmpl                   = '';
 
 $ENV{'HTML_TEMPLATE_ROOT'} = $INCLUDES;
@@ -86,15 +86,15 @@ my %tmpl_params            = (
 
 ### action
 
-# create new cgi object ...
+# Create new CGI object...
 my $cgi = LIR::CGI->new(%CGI_DFLTS);
 
-# ... and parse cgi query
+# ...and parse CGI query
 $cgi->parse_query;
 
-# get action to perform
+# Get action to perform
 my %action = (
-  'help'    => sub { tmpl_action(); },
+# 'help'    => sub { tmpl_action(); },
   'start'   => sub { start(); },
   'submit'  => sub { submit(); },
   'default' => sub { tmpl_action(); }
@@ -102,10 +102,9 @@ my %action = (
 
 my $my_action = defined $action{$cgi->action} ? $cgi->action : 'default';
 
-# perform action
+# Perform action
 &{$action{$my_action}};
 
-# that's it ;-)
 exit 0;
 
 ### /action/
@@ -113,23 +112,15 @@ exit 0;
 ### subroutines
 
 # <sub tmpl_action>
-# perform action (input form or help)
+# Perform action (input form or help)
 sub tmpl_action {
   $my_action = $_[0] if defined $_[0];
 
-  # get template
   $tmpl = HTML::Template->new('filename'                    => $TMPL{$my_action},
                               'vanguard_compatibility_mode' => 1,
-                              # NOTE: HTML/Template.pm:1788:
-                              # $self->{template} =~ s/%(\w+)%/<TMPL_VAR NAME=$1>/g;
-                              #                         ^^^^^
-                              # in order to prevent HTML::Template from trying to
-                              # substitute constructs like:
-                              # query=%2Bindexierung+ranking.*%231.5+automatisch%23-1.5+-thesaurus
-                              #       ^^^^^^^^^^^^^^^^^^^^^^^^^
                               'loop_context_vars'           => 1,
                               'global_vars'                 => 1)
-    or die "can't get template for action $my_action!\n";
+    or die "Can't get template for action $my_action!\n";
 
   $tmpl_params{$my_action} = 1;
 
@@ -141,7 +132,7 @@ sub tmpl_action {
 
   $tmpl_params{'seconds'} = $cgi->time;
 
-  # send output to browser
+  # Send output to browser
   print "Content-type: $CONTENT_TYPE\n\n";
 
   $tmpl->param(%tmpl_params);
@@ -152,9 +143,9 @@ sub tmpl_action {
 # </sub tmpl_action>
 
 # <sub start>
-# ask for collection id
+# Ask for collection ID
 sub start {
-  # parameters and plausibility checks
+  # Parameters and plausibility checks
   my ($missing, $exists) = (0, 0);
 
   my $collection_id = $cgi->arg('id');
@@ -196,9 +187,9 @@ sub start {
 # </sub start>
 
 # <sub submit>
-# do the processing
+# Do the processing
 sub submit {
-  # parameters and plausibility checks
+  # Parameters and plausibility checks
   my ($missing, $exists) = (0, 0);
   my %cantread = ( 'db' => 0, 'r' => 0);
 
@@ -259,23 +250,23 @@ sub submit {
   $tmpl_params{'name'} = $name  || '';
   $tmpl_params{'desc'} = $desc  || '';
 
-  # unless something missing/already existing
+  # Unless something missing/already existing
   unless ($missing || $cantread{'db'} || $cantread{'r'} || $exists) {
-    # remove existing files
+    # Remove existing files
     unlink $db_path, $idx_path, $cfg_path;
 
-    # create indexes
+    # Create indexes
     tie_index(\%records, $db_path,  1);
     tie_index(\%index,   $idx_path, 1);
 
-    # create hash with information on db
+    # Create hash with information on DB
     my %db = ();
     tie_index(\%db, $cfg_path, 1);
     %db = (
       'id'           => $LAB . '/'  . $collection_id,
       'status'       => TRUE,
-      'name'         => $LAB . '/'  . $name,
-      'info'         => $LAB . ': ' . $desc,
+      'name'         => ucfirst($LAB) . ': ' . $name,
+      'info'         => ucfirst($LAB) . ': ' . $desc,
       'db_file'      => catfile($LAB, $db_dbm),
       'idx_file'     => catfile($LAB, $idx_dbm)
     );
@@ -292,13 +283,13 @@ sub submit {
 
     tie_index(\%db);
 
-    # auxiliary variables
+    # Auxiliary variables
     my %record    = ();
     my %doc_terms = ();
     my $summary   = '';
 
-    # read in db
-    $summary .= "processing db file: $db_file...\n";
+    # Read in DB
+    $summary .= "Processing db file: $db_file...\n";
 
     my ($i, $j) = (0, 1);
     my $db_fh   = param('db_file');
@@ -307,7 +298,7 @@ sub submit {
       $line =~ s{\s*\r?\n}{};
       next unless $line;
 
-      # record separator: &&&
+      # Record separator: &&&
       unless ($line eq '&&&') {
         $j = 0;
         from_to($line, $db_enc, "utf8");
@@ -337,15 +328,15 @@ sub submit {
 
     unless ($i) {
       unlink $db_path, $idx_path, $cfg_path;
-      die "couldn't read db file: $db_file!\n";
+      die "Couldn't read DB file: $db_file!\n";
     }
 
-    # read in ranking files
+    # Read in ranking files
     foreach my $r (sort keys %r_files) {
       my $r_file = $r_files{$r}->{'file'};
       my $r_enc  = $r_files{$r}->{'enc'};
 
-      $summary .= "\nprocessing ranking file: $r_file...\n";
+      $summary .= "\nProcessing ranking file: $r_file...\n";
 
       my ($i, $j) = (0, 1);
       my $r_fh    = param("r${r}_file");
@@ -355,7 +346,7 @@ sub submit {
         next unless $line;
 
         ++$i;
-        from_to($line, $r_enc, "utf8");
+        from_to($line, $r_enc, 'utf8');
 
         #                                   id   */;    terms
         my ($id, $terms) = ($line =~ m{\A\s*(.*?)[*;]\s*(.*)\z});
@@ -388,12 +379,12 @@ sub submit {
 
       unless ($i) {
         unlink $db_path, $idx_path, $cfg_path;
-        die "couldn't read ranking file: $r_file!\n";
+        die "Couldn't read ranking file: $r_file!\n";
       }
     }
 
-    # additional entries for index and records
-    $summary .= "\ninserting additional entries for index and records...\n";
+    # Additional entries for index and records
+    $summary .= "\nInserting additional entries for index and records...\n";
     my $cat_string = '__%' . $cat_tit . '%__';
     foreach my $doc (keys %doc_terms) {
       $temp_index{$cat_string}->{$doc} = $temp_records{$doc}->{$cat_tit};
@@ -403,8 +394,8 @@ sub submit {
       }
     }
 
-    # create indexes
-    $summary .= "\nwriting index files...\n";
+    # Create indexes
+    $summary .= "\nWriting index files...\n";
 
     $summary .= "-> $db_path\n";
     %records = %temp_records;
@@ -412,7 +403,7 @@ sub submit {
     $summary .= "-> $idx_path\n";
     %index = %temp_index;
 
-    # change group id of index files
+    # Change group ID of index files
     chown(-1, $GID, $db_path, $idx_path, $cfg_path);
 
     $summary .= "...done";
@@ -427,7 +418,7 @@ sub submit {
 # </sub submit>
 
 # <sub freq>
-# calculate term frequency
+# Calculate term frequency
 sub freq {
   my ($t, $id) = @_;
 
@@ -439,8 +430,7 @@ sub freq {
     while ($value =~ /$pat/g) { $f++; }
   }
 
-  $f ||= 1;
-  # the term "occurs" at least once, otherwise we wouldn't be here, now would we
+  $f ||= 1;  # The term "occurs" at least once
 
   return $f;
 }
@@ -449,7 +439,7 @@ sub freq {
 ### /subroutines/
 
 END {
-  # untie indexes
+  # Untie indexes
   tie_index(\%records);
   tie_index(\%index);
 }

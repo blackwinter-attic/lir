@@ -1,25 +1,25 @@
-#! /usr/bin/perl
+#! /usr/bin/env perl
 
 ###############################################################################
 #                                                                             #
-# lir_index.pl -- create/update indexes for lir.pl (console version)          #
+# lir_index.pl -- Create/update indexes for lir.pl (console version).         #
 #                                                                             #
-# A component of lir, the experimental information retrieval environment.     #
+# A component of LIR, the experimental information retrieval environment.     #
 #                                                                             #
-# Copyright (C) 2004-2011 Jens Wille                                          #
+# Copyright (C) 2004-2020 Jens Wille                                          #
 #                                                                             #
-# lir is free software: you can redistribute it and/or modify it under the    #
+# LIR is free software: you can redistribute it and/or modify it under the    #
 # terms of the GNU Affero General Public License as published by the Free     #
 # Software Foundation, either version 3 of the License, or (at your option)   #
 # any later version.                                                          #
 #                                                                             #
-# lir is distributed in the hope that it will be useful, but WITHOUT ANY      #
+# LIR is distributed in the hope that it will be useful, but WITHOUT ANY      #
 # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS   #
 # FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for     #
 # more details.                                                               #
 #                                                                             #
 # You should have received a copy of the GNU Affero General Public License    #
-# along with lir. If not, see <http://www.gnu.org/licenses/>.                 #
+# along with LIR. If not, see <http://www.gnu.org/licenses/>.                 #
 #                                                                             #
 ###############################################################################
 
@@ -41,39 +41,39 @@ use LIR::SVD;
 
 STDOUT->autoflush(1);
 
-# parse command line arguments
+# Parse command line arguments
 my ($gid,  $db_id, $db_file, $rvl_file, $with_svd, $svd_level, $dir, $force)
  = ('lir', 'lir',  '',       '',        0,         100,        '.',  0);
 my @sto_files = ();
 
 my $usage = <<HERE_USG;
-usage:
+Usage:
     $0 [--id=<db-id>] --db=<source.db> {--sto=<source.sto>,...|<source.sto>,...} [--rvl=<file.rvl>] [--with-svd --svd-level=<svd-level>] [--dir=<target-dir>] [--gid=<group-id>] [--force]
     $0 [-h|--help]
 HERE_USG
 
 my $help  = <<HERE_HELP;
-create/update indexes for lir.pl
+Create/update indexes for lir.pl
 
 $usage
 
-options:
-    -h, --help                display this help and exit
+Options:
+    -h, --help                Display this help and exit
 
-    --id=<db-id>              database id corresponding to db configuration (default: \'$db_id\')
-    --db=<source.db>          database source (*.db)
-    --sto=<source.sto>,...    index source (*.sto) (comma separated list)
-                              (additionally, all non-option arguments will be treated as sto files)
-                              NOTE: sto filenames need to be of format "<db-id>_<ranking-id>..."
-    --rvl=<file.rvl>          rvl file to calculate "better" term frequencies (*.rvl)
-    --with-svd                additionally create svd weights (default: without svd)
+    --id=<db-id>              Database ID corresponding to DB configuration (default: \'$db_id\')
+    --db=<source.db>          Database source (*.db)
+    --sto=<source.sto>,...    Index source (*.sto) (comma separated list)
+                              (Additionally, all non-option arguments will be treated as STO files)
+                              NOTE: STO filenames need to be of format "<db-id>_<ranking-id>..."
+    --rvl=<file.rvl>          RVL file to calculate "better" term frequencies (*.rvl)
+    --with-svd                Additionally create SVD weights (default: without SVD)
                               NOTE: VERY time consuming!!!
-    --svd-level=<svd-level>   level of "accuracy" for svd (default: $svd_level)
-    --dir=<target-dir>        directory to create indexes in (default: \'$dir\')
-    --gid=<group-id>          group to own index files (default: \'$gid\')
-    --force                   force overwriting of existing index files (default: don\'t overwrite)
+    --svd-level=<svd-level>   Level of "accuracy" for SVD (default: $svd_level)
+    --dir=<target-dir>        Directory to create indexes in (default: \'$dir\')
+    --gid=<group-id>          Group to own index files (default: \'$gid\')
+    --force                   Force overwriting of existing index files (default: don\'t overwrite)
 
-    all non-option arguments will be treated as sto files
+    All non-option arguments will be treated as STO files.
 HERE_HELP
 
 die "$usage\n" unless @ARGV;
@@ -91,17 +91,17 @@ GetOptions('id=s'        => \$db_id,
            '<>'          => sub { push(@sto_files, @_); })
   or die "$usage\n";
 
-die "no such db: $db_id!\n$usage\n"             unless defined $DB{$db_id};
-die "can't write to directory: $dir!\n$usage\n" unless -w $dir;
-die "no sto files supplied!\n$usage\n"          unless @sto_files;
-die "no db file supplied!\n$usage\n"            unless $db_file;
-die "not a db file: $db_file!\n$usage\n"        unless $db_file =~ m{\.db\z};
-die "can't read db file: $db_file!\n"           unless -r $db_file;
+die "No such DB: $db_id!\n$usage\n"             unless defined $DB{$db_id};
+die "Can't write to directory: $dir!\n$usage\n" unless -w $dir;
+die "No STO files supplied!\n$usage\n"          unless @sto_files;
+die "No DB file supplied!\n$usage\n"            unless $db_file;
+die "Not a DB file: $db_file!\n$usage\n"        unless $db_file =~ m{\.db\z};
+die "Can't read DB file: $db_file!\n"           unless -r $db_file;
 
 my $cat_id  = $DB{$db_id}->{'cat_id'};
 my $cat_tit = $DB{$db_id}->{'cat_tit'};
 
-# tie index files (overwrite if already existing)
+# Tie index files (overwrite if already existing)
 my $index_file   = $dir . '/' . $DB{$db_id}->{'idx_file'};
 my $records_file = $dir . '/' . $DB{$db_id}->{'db_file'};
 
@@ -111,25 +111,25 @@ my %records = ();
 my ($overwrite_index, $overwrite_records) = (0, 0);
 
 if (-r $index_file) {
-  die "index file $index_file already exists! not overwriting...\n$usage\n" unless $force;
+  die "Index file $index_file already exists! Not overwriting...\n$usage\n" unless $force;
 
-  warn "index file $index_file already exists! overwriting...\n";
+  warn "Index file $index_file already exists! Overwriting...\n";
   $overwrite_index = 1;
 }
 
 tie(%index, 'MLDBM', $index_file, O_WRONLY|O_EXCL|O_CREAT, 0640)
-  or die "can't tie to $index_file: $!\n";
+  or die "Can't tie to $index_file: $!\n";
 %index = () if $overwrite_index;
 
 if (-r $records_file) {
-  die "records file $records_file already exists! not overwriting...\n$usage\n" unless $force;
+  die "Records file $records_file already exists! Not overwriting...\n$usage\n" unless $force;
 
-  warn "records file $records_file already exists! overwriting...\n";
+  warn "Records file $records_file already exists! Overwriting...\n";
   $overwrite_records = 1;
 }
 
 tie(%records, 'MLDBM', $records_file, O_WRONLY|O_EXCL|O_CREAT, 0640)
-  or die "can't tie to $records_file: $!\n";
+  or die "Can't tie to $records_file: $!\n";
 %records = () if $overwrite_records;
 
 my %temp_index   = ();
@@ -139,10 +139,10 @@ my %doc_terms    = ();
 my %rvl          = ();
 my %seen         = ();
 
-# read in rvl
+# Read in RVL
 if (-r $rvl_file) {
-  print "\nreading rvl file: $rvl_file...\n";
-  open(RVL, "< $rvl_file") or die "can't open $rvl_file: $!\n";
+  print "\nReading RVL file: $rvl_file...\n";
+  open(RVL, "< $rvl_file") or die "Can't open $rvl_file: $!\n";
   my %temp = ();
   while (my $line = <RVL>) {
     next unless $line =~ m{\A[ *]*\d+ (.*?) -> (.*?) <};
@@ -162,23 +162,23 @@ if (-r $rvl_file) {
   print "...done\n";
 }
 else {
-  die "can't read rvl file: $rvl_file!\n" if $rvl_file;
+  die "Can't read RVL file: $rvl_file!\n" if $rvl_file;
 }
 
-# read in db
-print "\nprocessing db file: $db_file...\n";
+# Read in DB
+print "\nProcessing DB file: $db_file...\n";
 
 my ($i, $j) = (0, 1);
-open(DB, "< $db_file") or die "can't open $db_file: $!\n";
+open(DB, "< $db_file") or die "Can't open $db_file: $!\n";
 
 while (my $line = <DB>) {
   $line =~ s{\s*\r?\n}{};
   next unless $line;
 
-  # record separator: &&&
+  # Record separator: &&&
   unless ($line eq '&&&') {
     $j = 0;
-    from_to($line, $DB{$db_id}->{'db_enc'}, "utf8");
+    from_to($line, $DB{$db_id}->{'db_enc'}, 'utf8');
     $line =~ s{<}{&lt;}g;
     $line =~ s{>}{&gt;}g;
     $line =~ s{&}{&amp;}g;
@@ -203,18 +203,18 @@ while (my $line = <DB>) {
 print "\n$i records read\n";
 close DB;
 
-# read in sto's
-my @ranks = qw(x);  # for svd
+# Read in STOs
+my @ranks = qw(x);  # for SVD
 my @all_sto_files = split(',', join(',', @sto_files));
 foreach my $sto (sort @all_sto_files) {
-  print "\nprocessing sto file: $sto...\n";
-  unless (-r $sto) { warn "can't read sto file! skipping...\n"; next; }
+  print "\nProcessing STO file: $sto...\n";
+  unless (-r $sto) { warn "Can't read STO file! skipping...\n"; next; }
 
   my ($i, $j) = (0, 1);
-  open(STO, "< $sto") or die "can't open $sto: $!\n";
+  open(STO, "< $sto") or die "Can't open $sto: $!\n";
 
   my ($r) = ($sto =~ m{\A.*/${db_id}_(.)});
-  unless ($DB{$db_id}->{$r}) { warn "no such ranking id: $r! skipping sto file...\n"; next; }
+  unless ($DB{$db_id}->{$r}) { warn "No such ranking ID: $r! Skipping STO file...\n"; next; }
   #push(@ranks => $r);
 
   while (my $line = <STO>) {
@@ -222,7 +222,7 @@ foreach my $sto (sort @all_sto_files) {
     next unless $line;
 
     ++$i;
-    from_to($line, $DB{$db_id}->{'idx_enc'}, "utf8");
+    from_to($line, $DB{$db_id}->{'idx_enc'}, 'utf8');
 
     #                                   id   */;    terms
     my ($id, $terms) = ($line =~ m{\A\s*(.*?)[*;]\s*(.*)\z});
@@ -251,11 +251,12 @@ foreach my $sto (sort @all_sto_files) {
   print "\n$i records read\n";
   close STO;
 }
-die "index empty!\n" unless %temp_index;
 
-# svd
+die "Index empty!\n" unless %temp_index;
+
+# SVD
 if ($with_svd) {
-  print "\ncreating svd entries...\n";
+  print "\nCreating SVD entries...\n";
 
   my @terms = sort keys %temp_index;
   my @docs  = sort keys %doc_terms;
@@ -289,8 +290,8 @@ if ($with_svd) {
   print "\n";
 }
 
-# additional entries for index and records
-print "\ninserting additional entries for index and records...\n";
+# Additional entries for index and records
+print "\nInserting additional entries for index and records...\n";
 my $cat_string = '__%' . $cat_tit . '%__';
 foreach my $doc (keys %doc_terms) {
   $temp_index{$cat_string}->{$doc} = $temp_records{$doc}->{$cat_tit};
@@ -300,8 +301,8 @@ foreach my $doc (keys %doc_terms) {
   }
 }
 
-# create indexes
-print "\nwriting index files...\n";
+# Create indexes
+print "\nWriting index files...\n";
 
 print "-> $index_file\n";
 %index = %temp_index;
@@ -315,7 +316,7 @@ print "...done\n";
 
 qx{chgrp $gid $index_file $records_file};
 
-# calculate term frequency
+# Calculate term frequency
 sub freq {
   my ($t, $id) = @_;
 
@@ -326,8 +327,7 @@ sub freq {
     while ($value =~ /$pat/g) { $f++; }
   }
 
-  $f ||= 1;
-  # the term "occurs" at least once, otherwise we wouldn't be here, now would we
+  $f ||= 1;  # The term "occurs" at least once
 
   return $f;
 }

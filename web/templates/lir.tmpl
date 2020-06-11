@@ -19,13 +19,13 @@
             <TMPL_LOOP name="hidden_args">
             <input type="hidden" name="%arg%" value='%value%'></input>
             </TMPL_LOOP>
-            <label for="select_db">searching database</label>
+            <label for="select_db">Searching database</label>
             <select id="select_db" name="db" size="1" onchange="this.form.submit()">
               <TMPL_LOOP name="select_db">
               <option value="%db%" %db_selected% %db_disabled%>%db_name%</option>
               </TMPL_LOOP>
             </select>
-            <input type="submit" value="change"></input>
+            <input type="submit" value="Change"></input>
           </form>
         </td>
         <td>
@@ -42,36 +42,36 @@
             <input type="hidden" name="db" value="%my_db%"></input>
             <table>
               <tr>
-                <td class="form_label"><label for="input_query"><a class="help_me" href="%help_file%#hints">query</a></label>:</td>
+                <td class="form_label"><label for="input_query"><a class="help_me" href="%help_file%#hints">Query</a></label>:</td>
                 <td><textarea id="input_query" cols="50" rows="10" name="query">%my_query%</textarea></td>
               </tr>
               <tr>
-                <td class="form_label"><a class="help_me" href="%help_file%#options">options</a>:</td>
+                <td class="form_label"><a class="help_me" href="%help_file%#options">Options</a>:</td>
                 <td>
                   <input id="input_type" type="checkbox" name="regexp" value="1" %regexp_checked%></input>
-                  <label for="input_type">regular expression</label>
+                  <label for="input_type">Regular expression</label>
                   <input id="input_truncated" type="checkbox" name="truncated" value="1" %truncated_checked%></input>
-                  <label for="input_truncated">end-truncated</label>
+                  <label for="input_truncated">End-truncated</label>
                   <input id="input_case_sensitive" type="checkbox" name="case_sensitive" value="1" %case_sensitive_checked%></input>
-                  <label for="input_case_sensitive">case-sensitive</label>
+                  <label for="input_case_sensitive">Case-sensitive</label>
                 </td>
               </tr>
               <tr>
-                <td class="form_label"><label for="select_ranking"><a class="help_me" href="%help_file%#algorithms">ranking</a></label>: </td>
+                <td class="form_label"><label for="select_ranking"><a class="help_me" href="%help_file%#algorithms">Ranking</a></label>: </td>
                 <td>
                   <select id="select_ranking" name="ranking" size="1">
                     <TMPL_LOOP name="select_ranking">
                     <option value="%id%" %selected% %disabled%>%name%</option>
                     </TMPL_LOOP>
                   </select>
-                  <label for="input_threshold">threshold</label>: <input id="input_threshold" type="text" size="6" maxlength="6" name="threshold" value="%my_threshold%"></input><br />
+                  <label for="input_threshold">Threshold</label>: <input id="input_threshold" type="text" size="6" maxlength="6" name="threshold" value="%my_threshold%"></input><br />
                   <div style="padding-top: 5px;">
                   <label for="input_ranking_x"><a class="help_me" href="%help_file%#custom">%ranking_algorithm_x%</a></label>: <input id="input_ranking_x" type="text" size="40" maxlength="100" name="custom_ranking" value="%my_custom_ranking%"></input></div>
                 </td>
               </tr>
               <tr>
                 <td></td>
-                <td><hr /><input type="submit" value="search" %search_disabled%></input> <input type="reset" value="reset"></input></td>
+                <td><hr /><input type="submit" value="Search" %search_disabled%></input> <input type="reset" value="Reset"></input></td>
               </tr>
             </table>
           </form>
@@ -81,22 +81,22 @@
             <table>
               <tr>
                 <td>
-                  <strong>search tips:</strong>
+                  <strong>Search tips:</strong>
                   <ul>
-                    <li>query will be performed as <a class="help_me" href="%help_file%#ranked_query">&quot;ranked query&quot;</a></li>
-                    <li><strong>try <a class="help_me" href="%help_file%#regular_expressions">regular expressions</a>! ;-)</strong></li>
+                    <li>Query will be performed as <a class="help_me" href="%help_file%#ranked_query">&quot;ranked query&quot;</a></li>
+                    <li>Try <a class="help_me" href="%help_file%#regular_expressions">regular expressions</a></li>
                     <li><code>+/-<var title="%tt_term%">term</var></code> = <var title="%tt_term%">term</var> <em>must</em> / <em>must not</em> occur</li>
-                    <li><code><var title="%tt_term%">term</var>#<var title="%tt_number%">number</var></code> = <var title="%tt_term%">term</var>&apos;s weight gets multiplied by <var title="%tt_number%">number</var> =&gt; <em>boost factor</em></li>
-                    <li><a class="help_me" href="%help_file%#custom">custom ranking</a>:<br />
-                      <code>tf</code> = term frequency<br />
-                      <code>df</code> = document frequency<br />
-                      <code>N</code> = number of documents in the collection</li>
-                    <li>threshold:<br />
-                      <code><var title="%tt_number%">number</var>(%)</code> = display only documents with at least a weight of <var title="%tt_number%">number</var> (percent of the maximum weight)<br />
-                      <code>#<var title="%tt_number%">number</var>(%)</code> = display top <var title="%tt_number%">number</var> (percent) documents</li>
-                    <li class="hidden"></li>
-                    <li>e.g.: <a href="%cgi_file%?db=%my_db%&amp;query=%2Bindexierung+ranking.*%231.5+automatisch%23-1.5+-thesaurus&amp;ranking=2&amp;regexp=1&amp;threshold=2.75&amp;action=get_results"><samp>+indexierung ranking.*#1.5 automatisch#-1.5 -thesaurus</samp></a></li>
+                    <li><code><var title="%tt_term%">term</var>#<var title="%tt_number%">number</var></code> = <var title="%tt_term%">term</var>&apos;s weight gets multiplied by <var title="%tt_number%">number</var> (=&gt; <em>boost factor</em>)</li>
+                    <li><a class="help_me" href="%help_file%#custom">Custom ranking</a>:<br />
+                      <code>tf</code> = Term frequency<br />
+                      <code>df</code> = Document frequency<br />
+                      <code>N</code> = Number of documents in the collection</li>
+                    <li>Threshold:<br />
+                      <code><var title="%tt_number%">number</var>(%)</code> = Display only documents with at least a weight of <var title="%tt_number%">number</var> (percent of the maximum weight)<br />
+                      <code>#<var title="%tt_number%">number</var>(%)</code> = Display top <var title="%tt_number%">number</var> (percent) documents</li>
                   </ul>
+                  <strong>Sample query:</strong>
+                  <a href="%cgi_file%?db=%my_db%&amp;query=%2Bindexierung+ranking.*%231.5+automatisch%23-1.5+-thesaurus&amp;ranking=2&amp;regexp=1&amp;threshold=2.75&amp;action=get_results"><samp>+indexierung ranking.*#1.5 automatisch#-1.5 -thesaurus</samp></a>
                 </td>
               </tr>
             </table>

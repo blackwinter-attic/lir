@@ -7,7 +7,7 @@ This documentation refers to LIR version 0.3
 
 ## DESCRIPTION
 
-LIR – Learning Information Retrieval ("Lehr- und Lernsystem Information Retrieval") is an experimental information retrieval environment to teach and learn information retrieval concepts. It is designed to be highly configurable and parametrisable.
+LIR – Learning Information Retrieval ("Lehr- und Lernsystem Information Retrieval") is an experimental information retrieval environment to teach and learn information retrieval concepts. It is designed to be highly configurable and parametrisable. Refer to the original project [overview](web/files/betz_-_projekt_lir_-_lehr-_und_lernsystem_information_retrieval.pdf) and [documentation](web/files/betz,_hörnig,_lepsky_-_lehr-_und_lernsystem_information_retrieval.pdf) for more background information.
 
 The original aim (and still current use-case) was to support a practical course on Automatic Indexing at the Institute of Information Science at TH Köln. It should allow students to test their indexing results and experiment with different algorithms for relevance ranking.
 

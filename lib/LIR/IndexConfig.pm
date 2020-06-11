@@ -1,23 +1,23 @@
 ###############################################################################
 #                                                                             #
-# IndexConfig.pm -- lir_index.pl configuration file                           #
+# IndexConfig.pm -- lir_index.pl configuration file.                          #
 #                                                                             #
-# A component of lir, the experimental information retrieval environment.     #
+# A component of LIR, the experimental information retrieval environment.     #
 #                                                                             #
-# Copyright (C) 2004-2011 Jens Wille                                          #
+# Copyright (C) 2004-2020 Jens Wille                                          #
 #                                                                             #
-# lir is free software: you can redistribute it and/or modify it under the    #
+# LIR is free software: you can redistribute it and/or modify it under the    #
 # terms of the GNU Affero General Public License as published by the Free     #
 # Software Foundation, either version 3 of the License, or (at your option)   #
 # any later version.                                                          #
 #                                                                             #
-# lir is distributed in the hope that it will be useful, but WITHOUT ANY      #
+# LIR is distributed in the hope that it will be useful, but WITHOUT ANY      #
 # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS   #
 # FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for     #
 # more details.                                                               #
 #                                                                             #
 # You should have received a copy of the GNU Affero General Public License    #
-# along with lir. If not, see <http://www.gnu.org/licenses/>.                 #
+# along with LIR. If not, see <http://www.gnu.org/licenses/>.                 #
 #                                                                             #
 ###############################################################################
 
@@ -42,21 +42,21 @@ our @EXPORT_OK   = map(@{$_} => values %EXPORT_TAGS);
 
 ### /variables to export/
 
-### other modules to _use_
+### other modules
 
 use File::Spec::Functions qw(catfile);
 
 use LIR::GlobalConfig     qw($TEMPLATES);
 
-### /other modules to _use_/
+### /other modules/
 
 ### global settings
 
-# my lir_index.pl version ;-)
+# My lir_index.pl version
 our $VERSION = '0.19';
 
-# default cgi arguments
-our %CGI_DFLTS = (            # (cgi argument -> argument value)
+# Default CGI arguments
+our %CGI_DFLTS = (            # (CGI argument -> argument value)
   'action' => 'default'
 );
 
@@ -65,7 +65,7 @@ our %TMPL      = (
   'help'    => catfile($TEMPLATES, 'index_help.tmpl')
 );
 
-our $HEADING = 'lir index - create indexes for lir.pl';
+our $HEADING = 'LIR Index – Create indexes for lir.pl';
 
 ### /global settings/
 

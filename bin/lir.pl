@@ -1,25 +1,25 @@
-#! /usr/bin/perl
+#! /usr/bin/env perl
 
 ###############################################################################
 #                                                                             #
-# lir.pl -- query lir indexes (console version)                               #
+# lir.pl -- Query LIR indexes (console version).                              #
 #                                                                             #
-# A component of lir, the experimental information retrieval environment.     #
+# A component of LIR, the experimental information retrieval environment.     #
 #                                                                             #
-# Copyright (C) 2004-2011 Jens Wille                                          #
+# Copyright (C) 2004-2020 Jens Wille                                          #
 #                                                                             #
-# lir is free software: you can redistribute it and/or modify it under the    #
+# LIR is free software: you can redistribute it and/or modify it under the    #
 # terms of the GNU Affero General Public License as published by the Free     #
 # Software Foundation, either version 3 of the License, or (at your option)   #
 # any later version.                                                          #
 #                                                                             #
-# lir is distributed in the hope that it will be useful, but WITHOUT ANY      #
+# LIR is distributed in the hope that it will be useful, but WITHOUT ANY      #
 # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS   #
 # FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for     #
 # more details.                                                               #
 #                                                                             #
 # You should have received a copy of the GNU Affero General Public License    #
-# along with lir. If not, see <http://www.gnu.org/licenses/>.                 #
+# along with LIR. If not, see <http://www.gnu.org/licenses/>.                 #
 #                                                                             #
 ###############################################################################
 
@@ -33,21 +33,21 @@ use File::Basename;
 use lib '../lib';
 use LIR::GlobalConfig qw(%DB);
 
-my $usage = "usage: $0 [-h|--help] { -q <query> | -d <docnum> } <index.dbm>";
-my $help  = "test access on lir indexes";
+my $usage = "Usage: $0 [-h|--help] { -q <query> | -d <docnum> } <index.dbm>";
+my $help  = "Test access on LIR indexes";
 die "$help\n$usage\n" if $ARGV[0] && $ARGV[0] =~ m{\A(?:-h|--help)\z};
 die "$usage\n" unless @ARGV == 3;
-die "only querying and display supported!\n$usage\n" unless $ARGV[0] =~ m{\A(?:-q|-d)\z};
+die "Only querying and display supported!\n$usage\n" unless $ARGV[0] =~ m{\A(?:-q|-d)\z};
 
 my $idxdbm = $ARGV[2];
-die "not a dbm file $idxdbm!\n$usage\n" unless $idxdbm =~ m{\.dbm\z};
-die "can't read $idxdbm!\n$usage\n" unless -r $idxdbm;
+die "Not a DBM file $idxdbm!\n$usage\n" unless $idxdbm =~ m{\.dbm\z};
+die "Can't read $idxdbm!\n$usage\n" unless -r $idxdbm;
 
 my ($id) = (basename $idxdbm =~ m{\A(.*?)_});
 my $cat_tit = '__%' . ($DB{$id}->{'cat_tit'} || '020') . '%__';
 
 my %index = ();
-tie(%index, 'MLDBM', $idxdbm, O_RDONLY) or die "can't tie to $idxdbm: $!";
+tie(%index, 'MLDBM', $idxdbm, O_RDONLY) or die "Can't tie to $idxdbm: $!";
 
 if    ($ARGV[0] eq '-q') {
   my $query = $ARGV[1];

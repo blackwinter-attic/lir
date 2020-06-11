@@ -1,23 +1,23 @@
 ###############################################################################
 #                                                                             #
-# DB.pm -- lir database object                                                #
+# DB.pm -- LIR database object.                                               #
 #                                                                             #
-# A component of lir, the experimental information retrieval environment.     #
+# A component of LIR, the experimental information retrieval environment.     #
 #                                                                             #
-# Copyright (C) 2004-2011 Jens Wille                                          #
+# Copyright (C) 2004-2020 Jens Wille                                          #
 #                                                                             #
-# lir is free software: you can redistribute it and/or modify it under the    #
+# LIR is free software: you can redistribute it and/or modify it under the    #
 # terms of the GNU Affero General Public License as published by the Free     #
 # Software Foundation, either version 3 of the License, or (at your option)   #
 # any later version.                                                          #
 #                                                                             #
-# lir is distributed in the hope that it will be useful, but WITHOUT ANY      #
+# LIR is distributed in the hope that it will be useful, but WITHOUT ANY      #
 # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS   #
 # FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for     #
 # more details.                                                               #
 #                                                                             #
 # You should have received a copy of the GNU Affero General Public License    #
-# along with lir. If not, see <http://www.gnu.org/licenses/>.                 #
+# along with LIR. If not, see <http://www.gnu.org/licenses/>.                 #
 #                                                                             #
 ###############################################################################
 
@@ -29,11 +29,11 @@ use warnings;
 use LIR::GlobalConfig qw(:vars);
 use LIR::BaseUtil     qw(TRUE tie_index);
 
-# this module's version
+# This module's version
 our $VERSION = '0.2';
 
 # <constructor>
-# create LIR::CGI object
+# Create LIR::CGI object
 sub new {
   my $proto = shift;
   my $class = ref $proto || $proto;
@@ -61,7 +61,7 @@ sub new {
 # </constructor>
 
 # <initialization>
-# initialize object
+# Initialize object
 sub _init {
   my $self = shift;
 
@@ -77,7 +77,7 @@ sub _init {
     $self->{'cat_desc'} = $CAT_DESC{'lit'};
   }
   else {
-    die "can't find any category description!\n";
+    die "Can't find any category description!\n";
   }
 
   $self->{'id2rec'}       ||= \&idx2rec;
@@ -95,7 +95,7 @@ sub _init {
 
 ### object methods
 
-# shorthands
+# Shorthands
 sub id           { shift->{'id'};           }
 sub status       { shift->{'status'};       }
 sub name         { shift->{'name'};         }

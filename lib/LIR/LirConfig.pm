@@ -1,23 +1,23 @@
 ###############################################################################
 #                                                                             #
-# LirConfig.pm -- lir.pl configuration file                                   #
+# LirConfig.pm -- lir.pl configuration file.                                  #
 #                                                                             #
-# A component of lir, the experimental information retrieval environment.     #
+# A component of LIR, the experimental information retrieval environment.     #
 #                                                                             #
-# Copyright (C) 2004-2011 Jens Wille                                          #
+# Copyright (C) 2004-2020 Jens Wille                                          #
 #                                                                             #
-# lir is free software: you can redistribute it and/or modify it under the    #
+# LIR is free software: you can redistribute it and/or modify it under the    #
 # terms of the GNU Affero General Public License as published by the Free     #
 # Software Foundation, either version 3 of the License, or (at your option)   #
 # any later version.                                                          #
 #                                                                             #
-# lir is distributed in the hope that it will be useful, but WITHOUT ANY      #
+# LIR is distributed in the hope that it will be useful, but WITHOUT ANY      #
 # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS   #
 # FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for     #
 # more details.                                                               #
 #                                                                             #
 # You should have received a copy of the GNU Affero General Public License    #
-# along with lir. If not, see <http://www.gnu.org/licenses/>.                 #
+# along with LIR. If not, see <http://www.gnu.org/licenses/>.                 #
 #                                                                             #
 ###############################################################################
 
@@ -42,22 +42,22 @@ our @EXPORT_OK   = map(@{$_} => values %EXPORT_TAGS);
 
 ### /variables to export/
 
-### other modules to _use_
+### other modules
 
 use File::Spec::Functions qw(catfile);
 
 use LIR::GlobalConfig     qw($TEMPLATES);
 use LIR::BaseUtil         qw(FALSE TRUE);
 
-### /other modules to _use_/
+### /other modules/
 
 ### global settings
 
-# my lir.pl version ;-)
+# My lir.pl version
 our $VERSION = '0.31';
 
-# default cgi arguments
-our %CGI_DFLTS = (            # (cgi argument -> argument value)
+# Default CGI arguments
+our %CGI_DFLTS = (            # (CGI argument -> argument value)
   'db'             => 'lir',
   'action'         => 'default',
   'query'          => '',
@@ -71,7 +71,7 @@ our %CGI_DFLTS = (            # (cgi argument -> argument value)
   'custom_ranking' => 'tf * log(N / df)'
 );
 
-# templates
+# Templates
 our %TMPL = (
   'default'      => catfile($TEMPLATES, 'lir.tmpl'),
   'get_results'  => catfile($TEMPLATES, 'results.tmpl'),
@@ -80,18 +80,18 @@ our %TMPL = (
   'set_prefs'    => catfile($TEMPLATES, 'preferences.tmpl')
 );
 
-# aliases
+# Aliases
 $TMPL{'re_rank'}        = $TMPL{'get_results'};
 $TMPL{'search_similar'} = $TMPL{'get_results'};
 $TMPL{'get_prefs'}      = $TMPL{'default'};
 
-# heading
-our $HEADING = 'lir - "lehr- und lernsystem information retrieval"';
+# Heading
+our $HEADING = 'LIR – "Lehr- und Lernsystem Information Retrieval"';
 
-# step for "paged" results display
+# Step for "paged" results display
 our $STEP = 100;
 
-# use top 10 terms for "more like this" and "search similar"
+# Use top 10 terms for "more like this" and "search similar"
 our $SIM_N = 10;
 
 ### /global settings/

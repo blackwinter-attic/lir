@@ -22,7 +22,7 @@
         <table>
           <tr>
             <td colspan="6">
-              <input type="submit" value="search similar"></input>
+              <input type="submit" value="Search similar"></input>
             </td>
           </tr>
           <tr>
@@ -30,7 +30,7 @@
           </tr>
           <TMPL_LOOP name="records">
           <tr>
-            <td><input type="checkbox" name="record_num" value="%record_num%"></input> <strong>%record_num%</strong>:<br /><br /></td>
+            <td><h2><input type="checkbox" name="record_num" value="%record_num%"></input> %record_num%:</h2></td>
             <td></td>
             <td></td>
           </tr>
@@ -47,14 +47,14 @@
             <td></td>
           </tr>
           <tr>
-            <td colspan="2"><em>weighted terms:</em></td>
+            <td colspan="2"><em>Weighted terms:</em></td>
             <td></td>
           </tr>
           <TMPL_LOOP name="wterms">
           <tr>
             <td class="cat_desc"><strong>%ranking_algorithm%</strong> (%num%):</td>
-            <td class="long_text"><TMPL_LOOP name="terms">%term% {%weight%}<TMPL_UNLESS name="__last__"> <strong>||</strong> </TMPL_UNLESS></TMPL_LOOP></td>
-            <td><TMPL_IF name="mlt_args"><span class="more_like_this"><a href="%cgi_file%?%mlt_args%">more like this!</a></span></TMPL_IF></td>
+            <td class="long_text"><TMPL_LOOP name="terms">%term% {%weight%}<TMPL_UNLESS name="__last__"> <span class="divider">|</span> </TMPL_UNLESS></TMPL_LOOP></td>
+            <td><TMPL_IF name="mlt_args"><span class="more_like_this"><a href="%cgi_file%?%mlt_args%">More like this</a></span></TMPL_IF></td>
           </tr>
           </TMPL_LOOP>
           <tr>
@@ -66,13 +66,13 @@
           </tr>
           <tr>
             <td colspan="6">
-              <input type="submit" value="search similar"></input>
+              <input type="submit" value="Search similar"></input>
             </td>
           </tr>
         </table>
       </form>
       <TMPL_ELSE>
-      <div class="hint">please select record(s) to display!</div>
+      <div class="hint">Please select record(s) to display!</div>
       </TMPL_IF>
     </div> <!-- class="results_table" -->
   </div> <!-- class="form" -->

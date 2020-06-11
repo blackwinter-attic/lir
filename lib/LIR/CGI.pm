@@ -1,23 +1,23 @@
 ###############################################################################
 #                                                                             #
-# CGI.pm -- lir CGI query object                                              #
+# CGI.pm -- LIR CGI query object.                                             #
 #                                                                             #
-# A component of lir, the experimental information retrieval environment.     #
+# A component of LIR, the experimental information retrieval environment.     #
 #                                                                             #
-# Copyright (C) 2004-2011 Jens Wille                                          #
+# Copyright (C) 2004-2020 Jens Wille                                          #
 #                                                                             #
-# lir is free software: you can redistribute it and/or modify it under the    #
+# LIR is free software: you can redistribute it and/or modify it under the    #
 # terms of the GNU Affero General Public License as published by the Free     #
 # Software Foundation, either version 3 of the License, or (at your option)   #
 # any later version.                                                          #
 #                                                                             #
-# lir is distributed in the hope that it will be useful, but WITHOUT ANY      #
+# LIR is distributed in the hope that it will be useful, but WITHOUT ANY      #
 # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS   #
 # FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for     #
 # more details.                                                               #
 #                                                                             #
 # You should have received a copy of the GNU Affero General Public License    #
-# along with lir. If not, see <http://www.gnu.org/licenses/>.                 #
+# along with LIR. If not, see <http://www.gnu.org/licenses/>.                 #
 #                                                                             #
 ###############################################################################
 
@@ -34,13 +34,13 @@ use HTML::Entities qw(encode_entities_numeric);
 
 use LIR::BaseUtil  qw(:cons);
 
-# this module's version
+# This module's version
 our $VERSION = '0.3';
 
 # <constructor>
-# create LIR::CGI object
+# Create LIR::CGI object
 #
-# usage:
+# Usage:
 #  my $cgi = LIR::CGI->new(%argument_defaults);
 #
 sub new {
@@ -57,16 +57,16 @@ sub new {
 # </constructor>
 
 # <initialization>
-# initialize object
+# Initialize object
 sub _init {
   my $self = shift;
   my %args = @_;
 
-  my %dflts = %args;  # make copy of hash!!!
+  my %dflts = %args;  # Make copy of hash!
   $self->{'dflts'} = \%dflts;
   $self->{'args'}  = \%args;
 
-  $self->{'start'} = [gettimeofday()];  # this seems to give a much more realistic value than
+  $self->{'start'} = [gettimeofday()];  # This seems to give a much more realistic value than
                                         # using [$^T, 0] with tv_interval in LIR::CGI::time()
 }
 # </initialization>
@@ -74,7 +74,7 @@ sub _init {
 ### object methods
 
 # <sub parse_query>
-# parse cgi query
+# Parse CGI query
 sub parse_query {
   my $self = shift;
 
@@ -86,9 +86,9 @@ sub parse_query {
 # </sub parse_query>
 
 # <sub dflt>
-# get cgi default arguments
+# Get CGI default arguments
 #
-# usage:
+# Usage:
 #   $foo         = $cgi->dflt('foo');
 #   ($foo, $bar) = $cgi->dflt(qw(foo bar));
 #   $dflts       = $cgi->dflt;  # HASH ref
@@ -107,7 +107,7 @@ sub dflt {
 # </sub dflt>
 
 # <sub arg>
-# get/set cgi arguments
+# Get/set CGI arguments
 sub arg {
   my $self = shift;
 
@@ -115,14 +115,14 @@ sub arg {
 
   my ($arg, $val) = @_;
 
-  # NOTE: it's not possible to set a value to 'undef'
+  # NOTE: It's not possible to set a value to 'undef'
 
   return defined $val ? $self->{'args'}->{$arg} = $val : $self->{'args'}->{$arg};
 }
 # </sub arg>
 
 # <sub arg_enc>
-# get cgi arguments ("'" encoded!)
+# Get CGI arguments ("'" encoded!)
 sub arg_enc {
   my ($self, $arg) = @_;
 
@@ -131,7 +131,7 @@ sub arg_enc {
 # </sub arg_enc>
 
 # <sub is_dflt>
-# arg equals default value?
+# Arg equals default value?
 sub is_dflt {
   my ($self, $arg, $val) = @_;
 
@@ -141,7 +141,7 @@ sub is_dflt {
 # </sub is_dflt>
 
 # <sub arg2dflt>
-# set arg to its default value
+# Set arg to its default value
 sub arg2dflt {
   my ($self, $arg) = @_;
 
@@ -150,10 +150,10 @@ sub arg2dflt {
 # </sub arg2dflt>
 
 # <sub current>
-# return hash (ref) of non-default "core args" with their current values
+# Return hash (ref) of non-default "core args" with their current values
 # ("core args" being the ones defined on initialization)
 #
-# usage:
+# Usage:
 #   $current = $cgi->current($escape);          # HASH ref
 #   $current = $cgi->current($escape, %extra);  # HASH ref
 #   %current = $cgi->current($escape);          # HASH
@@ -174,7 +174,7 @@ sub current {
     $args{$arg} = $val;
   }
 
-  # anything left in %extra?
+  # Anything left in %extra?
   @args{keys %extra} = values %extra;
 
   return wantarray() ? %args : \%args;
@@ -182,9 +182,9 @@ sub current {
 # </sub current>
 
 # <sub to_string>
-# return args as query string
+# Return args as query string
 #
-# usage:
+# Usage:
 #  $query_string = $cgi->to_string;
 #  $query_string = $cgi->to_string(%extra);
 #
@@ -202,9 +202,9 @@ sub to_string {
 # </sub to_string>
 
 # <sub to_array>
-# return arg/value pairs as array (ref) of hash refs
+# Return arg/value pairs as array (ref) of hash refs
 #
-# usage:
+# Usage:
 #  $args = $cgi->to_array;          # ARRAY ref
 #  $args = $cgi->to_array(%extra);  # ARRAY ref
 #  @args = $cgi->to_array;          # ARRAY
@@ -224,7 +224,7 @@ sub to_array {
 }
 # </sub to_string>
 
-# shorthands for frequently used args
+# Shorthands for frequently used args
 sub db             { shift->arg('db'             => @_); }
 sub action         { shift->arg('action'         => @_); }
 sub query          { shift->arg('query'          => @_); }
@@ -238,7 +238,7 @@ sub record_num     { shift->arg('record_num'     => @_); }
 sub custom_ranking { shift->arg('custom_ranking' => @_); }
 
 # <sub time>
-# how long did the processing take?
+# How long did the processing take?
 sub time {
   my $self = shift;
 

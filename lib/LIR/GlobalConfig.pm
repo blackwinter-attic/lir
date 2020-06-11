@@ -1,23 +1,23 @@
 ###############################################################################
 #                                                                             #
-# GlobalConfig.pm -- global configuration file                                #
+# GlobalConfig.pm -- Global configuration file.                               #
 #                                                                             #
-# A component of lir, the experimental information retrieval environment.     #
+# A component of LIR, the experimental information retrieval environment.     #
 #                                                                             #
-# Copyright (C) 2004-2011 Jens Wille                                          #
+# Copyright (C) 2004-2020 Jens Wille                                          #
 #                                                                             #
-# lir is free software: you can redistribute it and/or modify it under the    #
+# LIR is free software: you can redistribute it and/or modify it under the    #
 # terms of the GNU Affero General Public License as published by the Free     #
 # Software Foundation, either version 3 of the License, or (at your option)   #
 # any later version.                                                          #
 #                                                                             #
-# lir is distributed in the hope that it will be useful, but WITHOUT ANY      #
+# LIR is distributed in the hope that it will be useful, but WITHOUT ANY      #
 # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS   #
 # FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for     #
 # more details.                                                               #
 #                                                                             #
 # You should have received a copy of the GNU Affero General Public License    #
-# along with lir. If not, see <http://www.gnu.org/licenses/>.                 #
+# along with LIR. If not, see <http://www.gnu.org/licenses/>.                 #
 #                                                                             #
 ###############################################################################
 
@@ -54,30 +54,30 @@ push(@EXPORT_OK => 'idx2rec');
 
 ### /variables to export/
 
-### other modules to _use_
+### other modules
 
 use File::Basename        qw(basename);
 use File::Spec::Functions qw(catfile);
 
 use LIR::BaseUtil         qw(FALSE TRUE untaint_var);
 
-### /other modules to _use_/
+### /other modules/
 
 ### global settings
 
-# my lir version ;-)
+# My LIR version
 our $VERSION = '0.3';
 
-# my progname (untainted)
-our $PROGNAME = untaint_var($0, '\.?[\w_/]+\.pl');
+# My progname (untainted)
+our $PROGNAME = untaint_var($0, '[\w_/-]+\.pl');
 
-# my name
+# My name
 our $BASENAME = basename $PROGNAME;
 
-# name "lir.pl" hard-coded into lir_index.pl
+# Name "lir.pl" hard-coded into lir_index.pl
 our $LIR_PL = 'lir.pl';
 
-# server settings
+# Server settings
 our $BASE_DIR  = '/lir';
 our $CGI_BIN   = catfile($BASE_DIR, 'cgi-bin');
 our $CGI_FILE  = catfile($CGI_BIN,  $BASENAME);
@@ -87,68 +87,68 @@ our $HOME_FILE = catfile($BASE_DIR, '');
 our $HELP_FILE = $CGI_FILE . '?action=help';
 our $PREF_FILE = $CGI_FILE . '?action=preferences';
 
-# file paths (relative to local cgi directory)
+# File paths (relative to local CGI directory)
 our $DATA       = '../data';
 our $LAB        = 'lab';
 our $LAB_DATA   = catfile($DATA, $LAB);
 our $WEB        = '../web';
 
-# group to own files (symbolic name)
+# Group to own files (symbolic name)
 our $GID = scalar getgrnam('lirwww') || scalar getgrnam('lir') || -1;
 
-# templates
+# Templates
 our $TEMPLATES = catfile($WEB, 'templates');
 our $INCLUDES  = catfile($WEB, 'includes');
 
-# http header
+# HTTP header
 $ENV{'HTTP_ACCEPT'} ||= '';
 our $CONTENT_TYPE = (! $ENV{'HTTP_ACCEPT'} || $ENV{'HTTP_ACCEPT'} =~ m{application/xhtml\+xml}) ? 'application/xhtml+xml' : 'text/html';
 
-# disabled, checked, selected (xhtml compliant!)
+# Disabled, checked, selected (XHTML compliant!)
 use constant {
   DISABLED => 'disabled="disabled"',
   CHECKED  => 'checked="checked"',
   SELECTED => 'selected="selected"'
 };
 
-# tooltips
+# Tooltips
 use constant {
-  TT_TERM     => 'query term',
-  TT_NUMBER   => 'arbitrary number (integer or real)',
-  TT_STRING   => 'arbitrary string',
-  TT_WORD     => '&quot;word&quot;',
-  TT_DOCUMENT => '&quot;document&quot;',
-  TT_WEIGHT   => 'term weight',
-  TT_FREQ     => 'term frequency',
-  TT_DOCFREQ  => 'document frequency',
-  TT_COLFREQ  => 'collection frequency',
-  TT_DOCNUM   => 'number of documents in the collection',
-  TT_LEN      => 'term length',
-  TT_DOCLEN   => 'document length',
-  TT_COLLEN   => 'collection length',
-  TT_FORMLEN  => 'number of distinct word forms in the document',
-  TT_E        => 'euler&apos;s number (e = 2.71828 18284...)'  # &#8776;
+  TT_TERM     => 'Query term',
+  TT_NUMBER   => 'Arbitrary number (integer or real)',
+  TT_STRING   => 'Arbitrary string',
+  TT_WORD     => '&quot;Word&quot;',
+  TT_DOCUMENT => '&quot;Document&quot;',
+  TT_WEIGHT   => 'Term weight',
+  TT_FREQ     => 'Term frequency',
+  TT_DOCFREQ  => 'Document frequency',
+  TT_COLFREQ  => 'Collection frequency',
+  TT_DOCNUM   => 'Number of documents in the collection',
+  TT_LEN      => 'Term length',
+  TT_DOCLEN   => 'Document length',
+  TT_COLLEN   => 'Collection length',
+  TT_FORMLEN  => 'Number of distinct word forms in the document',
+  TT_E        => 'Euler&apos;s number (e = 2.71828 18284...)'  # &#8776;
 };
 
-# my db's (containing all necessary information)
+# My DBs (containing all necessary information)
 # * status       - 0 = offline / 1 = online
 # * name         - short name
 # * info         - long name + addt'l info
-# * db_file      - db file (under $data)
-# * db_enc       - encoding of db file
+# * db_file      - DB file (under $data)
+# * db_enc       - encoding of DB file
 # * idx_file     - index file
 # * idx_enc      - encoding of index file
-# * id2rec       - how to convert index id to record id
-# * cat_desc_id  - category description id (only necessary if different from db id)
-# * cat_id       - category that contains the "id"
+# * id2rec       - how to convert index ID to record ID
+# * cat_desc_id  - category description ID (only necessary if different from DB ID)
+# * cat_id       - category that contains the "ID"
 # * cat_tit      - category that contains the "title"
 # * full_display - categories to display in "full" display
 # * ranking_id   - status (see above)
-our %DB = (                   # (db id -> \(item -> content)) [hash of hashes]
+our %DB = (                   # (DB ID -> \(item -> content)) [hash of hashes]
   'lir'     => {
     'status'       => TRUE,
-    'name'         => 'lir',
-    'info'         => 'lir test database (331 records)',
+    'name'         => 'LIR',
+    'info'         => 'LIR test database (331 records)',
     'db_file'      => 'lir_records.dbm',
     'db_enc'       => 'cp850',
     'idx_file'     => 'lir_index.dbm',
@@ -170,8 +170,8 @@ our %DB = (                   # (db id -> \(item -> content)) [hash of hashes]
   },
   'lit'     => {
     'status'       => TRUE,
-    'name'         => 'literatur zur inhaltserschließung',
-    'info'         => 'literatur zur inhaltserschließung (26.239 records)',
+    'name'         => 'Literatur zur Inhaltserschließung',
+    'info'         => 'Literatur zur Inhaltserschließung (26.239 records)',
     'db_file'      => 'lit_records.dbm',
     'db_enc'       => 'iso-8859-1',
     'idx_file'     => 'lit_index.dbm',
@@ -193,8 +193,8 @@ our %DB = (                   # (db id -> \(item -> content)) [hash of hashes]
   },
   #'lit_svd' => {
   #  'status'       => FALSE,
-  #  'name'         => 'literatur zur inhaltserschließung (svd)',
-  #  'info'         => 'literatur zur inhaltserschließung (26.239 records)<br />WITH SVD',
+  #  'name'         => 'Literatur zur Inhaltserschließung (SVD)',
+  #  'info'         => 'Literatur zur Inhaltserschließung (26.239 records)<br />WITH SVD',
   #  'db_file'      => 'lit_svd_records.dbm',
   #  'db_enc'       => 'iso-8859-1',
   #  'idx_file'     => 'lit_svd_index.dbm',
@@ -221,8 +221,8 @@ our %DB = (                   # (db id -> \(item -> content)) [hash of hashes]
   #},
   'rdk07'   => {
     'status'       => TRUE,
-    'name'         => 'rdk-web 07',
-    'info'         => 'rdk-web, volume 07 (762 records)<br /><small><em>based on DES.DBM</em></small>',
+    'name'         => 'RDK-Web 07',
+    'info'         => 'RDK-Web, Volume 07 (762 records)<br /><small><em>Based on DES.DBM</em></small>',
     'db_file'      => 'rdk07_records.dbm',
     'db_enc'       => 'iso-8859-1',
     'idx_file'     => 'rdk07_index.dbm',
@@ -248,25 +248,25 @@ our %DB = (                   # (db id -> \(item -> content)) [hash of hashes]
   }
 );
 
-# ranking algorithms (0-4 corresponding to Rvl2DB.ini)
-our %RANKING = (    # (ranking id -> name)
-  '0'  => 'salton',
-  '1'  => 'kascade einfach',
-  '2'  => 'kascade komplex',
-  '3'  => 'robertson',
-  '4'  => 'idf',
-  #'s0' => 'svd (salton)',
-  #'s1' => 'svd (kascade einfach)',
-  #'s2' => 'svd (kascade komplex)',
-  #'s3' => 'svd (robertson)',
-  #'s4' => 'svd (idf)',
-  #'sx' => 'svd (term frequency)',
-  'x'  => 'term frequency',
-  'y'  => 'custom',
-  'z'  => 'no ranking'
+# Ranking algorithms (0-4 corresponding to Rvl2DB.ini)
+our %RANKING = (    # (ranking ID -> name)
+  '0'  => 'Salton',
+  '1'  => 'Kascade einfach',
+  '2'  => 'Kascade komplex',
+  '3'  => 'Robertson',
+  '4'  => 'IDF',
+  #'s0' => 'SVD (Salton)',
+  #'s1' => 'SVD (Kascade einfach)',
+  #'s2' => 'SVD (Kascade komplex)',
+  #'s3' => 'SVD (Robertson)',
+  #'s4' => 'SVD (IDF)',
+  #'sx' => 'SVD (Term frequency)',
+  'x'  => 'Term frequency',
+  'y'  => 'Custom',
+  'z'  => 'No ranking'
 );
 
-# category descriptions
+# Category descriptions
 our %CAT_DESC = (             # (category -> description)
   'lit' => {
     '001' => 'Document No.',
@@ -335,12 +335,12 @@ our %CAT_DESC = (             # (category -> description)
 ### utilities
 
 # <sub idx2rec>
-# convert record id created by idx to original bismas id
+# Convert record ID created by IDX to original Bismas ID
 sub idx2rec {
   my $idx = shift;
   my $rec = $idx;
 
-  # idx id has (at least) seven digits
+  # IDX ID has (at least) seven digits
   $rec =~ s{\A00(.....)}{$1};
 
   return $rec;

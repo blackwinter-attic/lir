@@ -2,28 +2,28 @@
 
 ###############################################################################
 #                                                                             #
-# lir.pl -- "lehr- und lernsystem information retrieval"                      #
+# lir.pl -- LIR – "Lehr- und Lernsystem Information Retrieval".               #
 #                                                                             #
-# A component of lir, the experimental information retrieval environment.     #
+# A component of LIR, the experimental information retrieval environment.     #
 #                                                                             #
-# Copyright (C) 2004-2011 Jens Wille                                          #
+# Copyright (C) 2004-2020 Jens Wille                                          #
 #                                                                             #
-# lir is free software: you can redistribute it and/or modify it under the    #
+# LIR is free software: you can redistribute it and/or modify it under the    #
 # terms of the GNU Affero General Public License as published by the Free     #
 # Software Foundation, either version 3 of the License, or (at your option)   #
 # any later version.                                                          #
 #                                                                             #
-# lir is distributed in the hope that it will be useful, but WITHOUT ANY      #
+# LIR is distributed in the hope that it will be useful, but WITHOUT ANY      #
 # WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS   #
 # FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for     #
 # more details.                                                               #
 #                                                                             #
 # You should have received a copy of the GNU Affero General Public License    #
-# along with lir. If not, see <http://www.gnu.org/licenses/>.                 #
+# along with LIR. If not, see <http://www.gnu.org/licenses/>.                 #
 #                                                                             #
 ###############################################################################
 
-### modules + pragmas to _use_
+### modules + pragmas
 
 use strict;
 use warnings;
@@ -35,8 +35,8 @@ use HTML::Template        qw();
 use File::Basename        qw(basename dirname);
 use File::Spec::Functions qw(catfile);
 
-# my LIR modules
-# relative to cgi directory
+# My LIR modules
+# Relative to CGI directory
 
 use lib '../lib';
 
@@ -47,17 +47,17 @@ use LIR::BaseUtil         qw(:subs :cons);
 use LIR::CGI;
 use LIR::DB;
 
-### /modules + pragmas to _use_/
+### /modules + pragmas/
 
 ### global variables + settings
 
-# untaint PATH
+# Untaint PATH
 $ENV{'PATH'} = '/bin:/usr/bin:/usr/local/bin';
 
-# make %ENV safer
+# Make %ENV safer
 delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 
-# my HTML::Template
+# My HTML::Template
 my $tmpl                   = '';
 
 $ENV{'HTML_TEMPLATE_ROOT'} = $INCLUDES;
@@ -89,32 +89,32 @@ my %tmpl_params            = (
   'tt_e'         => TT_E
 );
 
-# global vars
-my $db = '';                  # my LIR::DB object
+# Global vars
+my $db = '';                  # My LIR::DB object
 
-my %ranking_list = ();        # ranked result list for re-ranking
+my %ranking_list = ();        # Ranked result list for re-ranking
 
-my %ranking_disabled = ();    # (ranking id -> disabled?)
-my %ranking_selected = ();    # (ranking id -> selected?)
+my %ranking_disabled = ();    # (Ranking ID -> disabled?)
+my %ranking_selected = ();    # (Ranking ID -> selected?)
 
-my %doc_matches  = ();        # matching terms per document (doc no. -> \terms) [hash of arrays]
-my %doc_weight   = ();        # cumulated weight of matching terms per document (doc no. -> weight)
+my %doc_matches  = ();        # Matching terms per document (doc no. -> \terms) [hash of arrays]
+my %doc_weight   = ();        # Cumulated weight of matching terms per document (doc no. -> weight)
 
-# indexes
-my %term_index   = ();        # terms from STO (term -> \(doc no. -> weight)) [hash of hashes]
-my %doc_index    = ();        # categories per record (ID -> \(catnum -> category content)) [hash of hashes]
+# Indexes
+my %term_index   = ();        # Terms from STO (term -> \(doc no. -> weight)) [hash of hashes]
+my %doc_index    = ();        # Categories per record (ID -> \(catnum -> category content)) [hash of hashes]
 
 ### /global variables + settings/
 
 ### action
 
-# create new cgi object ...
+# Create new CGI object...
 my $cgi = LIR::CGI->new(%CGI_DFLTS);
 
-# ... and parse cgi query
+# ...and parse CGI query
 $cgi->parse_query;
 
-# get action to perform
+# Get action to perform
 my %action = (
   'get_results'    => sub { get_results();    },
   'show_records'   => sub { show_records();   },
@@ -124,9 +124,9 @@ my %action = (
   'default'        => sub {}
 );
 
-# "aliases"
-$cgi->action('show_records')   if $cgi->action eq 'view';
-$cgi->action('search_similar') if $cgi->action eq 'search similar';
+# "Aliases"
+$cgi->action('show_records')   if lc($cgi->action) eq 'view';
+$cgi->action('search_similar') if lc($cgi->action) eq 'search similar';
 
 my $my_action = defined $action{$cgi->action} ? $cgi->action : 'default';
 
@@ -141,28 +141,28 @@ $tmpl = HTML::Template->new('filename'                    => $TMPL{$my_action},
                             #       ^^^^^^^^^^^^^^^^^^^^^^^^^
                             'loop_context_vars'           => 1,
                             'global_vars'                 => 1)
-  or die "can't get template for action $my_action!\n";
+  or die "Can't get template for action $my_action!\n";
 
 $tmpl_params{$my_action} = 1;
 
 unless ($my_action =~ m{\A(?:help)\z}) {
-  # create new db object
+  # Create new DB object
   $db = LIR::DB->new($cgi->db) || LIR::DB->new($cgi->dflt('db'))
-    or die "can't open db!\n";
+    or die "Can't open DB!\n";
 
-  # to be on the safe side ;-)
+  # To be on the safe side...
   $cgi->db($db->id);
 
-  # perform action
+  # Perform action
   &{$action{$my_action}};
 
   prepare_output();
 }
 else {
-  $tmpl_params{'heading'} = 'lir - ' . $my_action;
+  $tmpl_params{'heading'} = 'LIR – ' . ucfirst($my_action);
 }
 
-# send output to browser
+# Send output to browser
 print "Content-type: $CONTENT_TYPE\n\n";
 
 $tmpl->param(%tmpl_params);
@@ -170,7 +170,6 @@ print $tmpl->output;
 
 warningsToBrowser(1);
 
-# that's it ;-)
 exit 0;
 
 ### /action/
@@ -178,7 +177,7 @@ exit 0;
 ### subroutines
 
 # <sub get_results>
-# get query results
+# Get query results
 sub get_results {
   unless ($cgi->query) {
     $tmpl_params{'no_query'} = TRUE;
@@ -193,7 +192,7 @@ sub get_results {
 
   $cgi->regexp(TRUE) if $cgi->truncated || $cgi->case_sensitive;
 
-  # provide some kind of "case-insensitive" functionality for "fixed strings"
+  # Provide some kind of "case-insensitive" functionality for "fixed strings"
   # i.e. "first-letter/whole-word case-insensitive"
   unless ($cgi->regexp) {
     my @temp_args = ();
@@ -214,23 +213,23 @@ sub get_results {
 
   my $custom_ranking = length $cgi->custom_ranking ? $cgi->custom_ranking : $cgi->dflt('custom_ranking');
 
-  $custom_ranking =~ s{;.*}{};                    # delete everything after ";"
-  $custom_ranking =~ s{[^$chars[:alpha:]]}{}g;    # delete everything except allowed and alphabetic characters
+  $custom_ranking =~ s{;.*}{};                    # Delete everything after ";"
+  $custom_ranking =~ s{[^$chars[:alpha:]]}{}g;    # Delete everything except allowed and alphabetic characters
 
-  $cgi->custom_ranking($custom_ranking);          # provide denoised string (this may be of
+  $cgi->custom_ranking($custom_ranking);          # Provide denoised string (this may be of
                                                   # help to the user if untainting fails)
   $custom_ranking = untaint_var($custom_ranking, "([$chars]|$funcs|$vars)*");
-                    # check if only allowed characters and strings were used
+                    # Check if only allowed characters and strings were used
 
-  my $N = scalar keys %{$titleref};  # number of documents in the collection
+  my $N = scalar keys %{$titleref};  # Number of documents in the collection
 
-  # substitute special variables
+  # Substitute special variables
   $custom_ranking =~ s{N}{$N}g;
-  $custom_ranking =~ s{df}{\$df}g;  # escape for eval
+  $custom_ranking =~ s{df}{\$df}g;  # Escape for eval
   $custom_ranking =~ s{cf}{}g;
-  $custom_ranking =~ s{tf}{\$tf}g;  # escape for eval
+  $custom_ranking =~ s{tf}{\$tf}g;  # Escape for eval
 
-  # these contain documents that must (not) occur: (docnum -> count)
+  # These contain documents that must (not) occur: (docnum -> count)
   my %docs_must     = ();
   my %docs_must_not = ();
 
@@ -239,28 +238,27 @@ sub get_results {
   my $musts         = 0;
   foreach my $query_arg (@query_args) {
     my $must = 0;
-    if    ($query_arg =~ s{^\+}{}) { $must = 1; }
-    elsif ($query_arg =~ s{^\-}{}) { $must = -1; }
+    if    ($query_arg =~ s{\A\+}{}) { $must = 1; }
+    elsif ($query_arg =~ s{\A\-}{}) { $must = -1; }
 
     if    (!$old_query_arg && $query_arg =~ s{\A"(.*)"}{$1}) {
-      # single search term
-      # just proceed
+      # Single search term, just proceed...
     }
     elsif (!$old_query_arg && $query_arg =~ s{\A"[-+]?}{}) {
-      # beginning of a phrase
+      # Beginning of a phrase
       $old_query_arg = $query_arg;
       $old_must      = $must;
       next;  # next foreach
     }
     elsif ($old_query_arg && $query_arg =~ s{\A(.*)"}{$1}) {
-      # end of a phrase
+      # End of a phrase
       $query_arg     = $old_query_arg . ' ' . $query_arg;
       $old_query_arg = '';
       $must          = $old_must;
     }
     elsif ($old_query_arg) {
-      # inner part of a phrase
-      # ignore $must, consider "#..." as literal
+      # Inner part of a phrase
+      # Ignore $must, consider "#..." as literal
       $old_query_arg .= ' ' . $query_arg;
       next;  # next foreach
     }
@@ -268,7 +266,7 @@ sub get_results {
     ($query_arg, my $modifier) = split('#', $query_arg, 2);
     $modifier = 1 unless defined $modifier;
 
-    my @matching_terms = ($query_arg);  # assume match -- will be ignored if it's not (see below)
+    my @matching_terms = ($query_arg);  # Assume match -- will be ignored if it's not (see below)
 
     if ($cgi->regexp) {
       @terms = keys %term_index unless @terms;
@@ -285,10 +283,10 @@ sub get_results {
       #next unless $match;
 
       my $termref = $term_index{$match};
-      next unless $termref;                 # eliminate non-matching
-      next if     $match =~ m{^__%.*%__$};  # reserved for internal use
+      next unless $termref;                   # Eliminate non-matching
+      next if     $match =~ m{\A__%.*%__\z};  # Reserved for internal use
 
-      my $df = scalar keys %{$termref};     # document frequency
+      my $df = scalar keys %{$termref};       # Document frequency
 
       foreach my $docnum (keys %{$termref}) {
         my $weight;
@@ -302,7 +300,7 @@ sub get_results {
           my $tf = $termref->{$docnum}->{'x'};
 
           $weight = eval $custom_ranking;
-          $weight = sprintf("%0.4f", $weight);  # round to four decimals
+          $weight = sprintf("%0.4f", $weight);  # Round to four decimals
         }
         else                                {
           $weight = $termref->{$docnum}->{$cgi->ranking};
@@ -326,7 +324,7 @@ sub get_results {
 
   foreach my $docnum (keys %doc_matches) {
     if    ($docs_must_not{$docnum}) {
-          # document occurs in %docs_must_not
+          # Document occurs in %docs_must_not
           # i.e. it mustn't occur
       delete $doc_matches{$docnum};
       delete $doc_weight{$docnum};
@@ -341,12 +339,12 @@ sub get_results {
     }
   }
 
-  # no results? quit early!
+  # No results? Quit early!
   return unless %doc_weight;
 
-  # first, sort by document number...
+  # First, sort by document number...
   my @docs_match = sort keys %doc_weight;
-  # ...and then by weight! (unless ranking is "none")
+  # ...and then by weight! (Unless ranking is "none")
   @docs_match = sort { $doc_weight{$b} <=> $doc_weight{$a} } @docs_match unless $cgi->ranking eq 'z';
 
   my $max_result_num = scalar @docs_match;
@@ -356,7 +354,7 @@ sub get_results {
   my $threshold_val = 0;
   my $threshold_num = $max_result_num;
   unless ($cgi->threshold eq '' || $cgi->offset > 1) {
-    ($threshold = $cgi->threshold) =~ s{[^0-9\-+.%#]}{}g;  # delete everything except allowed characters
+    ($threshold = $cgi->threshold) =~ s{[^0-9\-+.%#]}{}g;  # Delete everything except allowed characters
     if ($cgi->ranking ne 'z') {
       if    ($threshold =~ m{\A#.*%\z}) { ($threshold_num = $threshold) =~ tr{%#}{}d;
                                            $threshold_num = $threshold_num / 100 * $max_result_num }
@@ -378,15 +376,15 @@ sub get_results {
   foreach my $doc (@docs_match) {
     push(@result_list, $doc)
       if $threshold eq ''
-         # no threshold
+         # No threshold
       || $threshold =~ m{\A#}
-         # top of list
+         # Top of list
       || $cgi->ranking eq 'z'
-         # no ranking => no weight to exceed threshold
+         # No ranking => no weight to exceed threshold
       || $cgi->offset > 1
-         # we are "paging" through results list
+         # We are "paging" through results list
       || $doc_weight{$doc} >= $threshold_val;
-         # weight exceeds threshold!
+         # Weight exceeds threshold!
   }
 
   my $first_result_num = $cgi->offset > 1 ? $cgi->offset : 1;
@@ -438,7 +436,7 @@ sub get_results {
                                          'matches'         => $matches });
 
     if (defined $cgi->arg('re_ranking') && length $cgi->arg('re_ranking') && $cgi->arg('re_ranking') ne $cgi->ranking) {
-      $weight =~ tr{@<>/strong}{}d;
+      $weight =~ tr{@</strong>}{}d;
       $ranking_list{$docnum} = $result_num . ':' . $weight;
     }
   }
@@ -463,7 +461,7 @@ sub get_results {
   my $of = $result_num < $max_result_num
     ? "<a href=\"$CGI_FILE?" . $cgi->to_string('threshold' => '',
                                                'offset'    => undef,
-                                               'action'    => 'get_results') . "\" title=\"display all!\">$max_result_num</a>"
+                                               'action'    => 'get_results') . "\" title=\"Display all\">$max_result_num</a>"
     : "$max_result_num";
 
   my $result_s     = $result_num > 1     ? 's' : '';
@@ -488,16 +486,16 @@ sub get_results {
 # </sub get_results>
 
 # <sub re_rank>
-# perform new ranking on results
+# Perform new ranking on results
 sub re_rank {
   if ($cgi->arg('re_ranking') ne $cgi->ranking) {
     my $old_threshold = $cgi->threshold;
     $cgi->threshold('');
 
-    # aim: get former ranking and compare to the new one -- how?
+    # Aim: Get former ranking and compare to the new one -- how?
     get_results();
 
-    # clean up
+    # Clean up
     %doc_weight  = ();
     %doc_matches = ();
 
@@ -506,7 +504,7 @@ sub re_rank {
     delete $tmpl_params{'refine_args'};
     delete $tmpl_params{'re_rank_args'};
 
-    # and get new ranking
+    # And get new ranking
     $cgi->ranking($cgi->arg('re_ranking'));
     $cgi->threshold($old_threshold);
   }
@@ -516,7 +514,7 @@ sub re_rank {
 # </sub re_rank>
 
 # <sub search_similar>
-# "relevance feedback"
+# "Relevance feedback"
 sub search_similar {
   $tmpl_params{'similar'} = TRUE;
 
@@ -549,7 +547,7 @@ sub search_similar {
 # </sub search_similar>
 
 # <sub show_records>
-# display records
+# Display records
 sub show_records {
   return unless $cgi->record_num;
 
@@ -620,7 +618,7 @@ sub show_records {
 # </sub show_records>
 
 # <sub prepare_output>
-# prepare output ;-)
+# Prepare output
 sub prepare_output {
   my $search_disabled = DISABLED;
   foreach my $key (sort keys %RANKING) {
@@ -638,11 +636,11 @@ sub prepare_output {
   }
   $ranking_disabled{'y'} = DISABLED if $ranking_disabled{'x'};
 
-  # check/select given ranking ...
+  # Check/select given ranking...
   if ($db->{$cgi->ranking}) {
     $ranking_selected{$cgi->ranking} = SELECTED;
   }
-  # ... or first available otherwise
+  # ...or first available otherwise
   else {
     foreach my $key (sort keys %RANKING) {
       if ($db->{$key}) {
@@ -666,7 +664,8 @@ sub prepare_output {
                                                             :  DISABLED,
                                               'db_name'     => $DB{$_}->{'name'} })
     for sort keys %DB;
-  if ($db->id =~ m{^$LAB/}) {
+
+  if ($db->id =~ m{\A$LAB/}) {
     unshift(@{$tmpl_params{'select_db'}} => { 'db'          => $db->id,
                                               'db_selected' => SELECTED,
                                               'db_disabled' => '',
@@ -714,7 +713,7 @@ sub prepare_output {
 ### /subroutines/
 
 END {
-  # untie indexes
+  # Untie indexes
   tie_index(\%term_index);
   tie_index(\%doc_index);
 }
