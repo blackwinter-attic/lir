@@ -65,7 +65,6 @@ Alias /lir /usr/local/lir/web
 
 The directories `web/sources` and `data/lab` have to be writable by the web server process.
 
-By default, an additional program parse_css.pl is used to allow variables in the CSS files. It is available from github[http://github.com/blackwinter/scratch/tree/master/parse_css.pl] and has to be installed as site-wide CGI script. Alternatively, you can replace the dynamic CSS files with their static counterparts and/or adjust the paths in the HTML and template files accordingly.
 
 ## LINKS
 
