@@ -143,9 +143,7 @@ $tmpl = HTML::Template->new('filename'                    => $TMPL{$my_action},
                             'global_vars'                 => 1)
   or die "can't get template for action $my_action!\n";
 
-$tmpl_params{$my_action}   = 1;
-$tmpl_params{'mtime'}      = mtime();
-$tmpl_params{'tmpl_mtime'} = mtime($TMPL{$my_action});
+$tmpl_params{$my_action} = 1;
 
 unless ($my_action =~ m{\A(?:help)\z}) {
   # create new db object

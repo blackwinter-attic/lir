@@ -131,9 +131,7 @@ sub tmpl_action {
                               'global_vars'                 => 1)
     or die "can't get template for action $my_action!\n";
 
-  $tmpl_params{$my_action}   = 1;
-  $tmpl_params{'mtime'}      = mtime();
-  $tmpl_params{'tmpl_mtime'} = mtime($TMPL{$my_action});
+  $tmpl_params{$my_action} = 1;
 
   foreach my $r (sort keys %RANKING) {
     next if $r =~ m{\A(?:y|z)\z};

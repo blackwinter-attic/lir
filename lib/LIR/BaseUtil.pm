@@ -35,7 +35,7 @@ require Exporter;
 our @ISA         = qw(Exporter);
 our %EXPORT_TAGS = (
   subs => [qw(
-    mtime tie_index untaint_var
+    tie_index untaint_var
   )],
   cons => [qw(
     FALSE TRUE
@@ -62,25 +62,6 @@ use constant TRUE  => !FALSE;
 ### /constants/
 
 ### subroutines
-
-# <sub mtime>
-# get time and date of last modification
-sub mtime {
-  my @files = @_ ? @_ : ($0, map { $_ = 'LIR/' . $_ . '.pm' } split('\|', $MY_MODULES));
-                             # maybe we should exclude Config.pm!?
-                             # => grep { $_ !~ m{^(Config)$} }
-
-  # relying on EPOCH (practically) always being 10-digit
-  # and thus being able to simply use string comparison:
-  my $newest = (sort map((stat)[9] => @files))[-1];
-
-  my $dt = DateTime->from_epoch('epoch' => $newest);
-  $dt->set_time_zone('local');
-
-  my $mtime = $dt->ymd('/') . ' ' . $dt->hms . ' ' . $dt->time_zone_short_name;
-  return lc($mtime);
-}
-# </sub mtime>
 
 # <sub tie_index>
 # tie index file to hash
