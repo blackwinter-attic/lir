@@ -50,7 +50,7 @@ Alias /lir /usr/local/lir/web
   Options Indexes MultiViews FollowSymLinks
   Require all granted
 
-  AddType application/xhtml+xml .html .shtml
+  AddType application/xhtml+xml .html
 </Directory>
 
 # Restrict access to lir_index.pl
