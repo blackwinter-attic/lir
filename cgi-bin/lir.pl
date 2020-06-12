@@ -185,18 +185,6 @@ sub get_results {
 
   $cgi->regexp(TRUE) if $cgi->truncated || $cgi->case_sensitive;
 
-  # Provide some kind of "case-insensitive" functionality for "fixed strings"
-  # i.e. "first-letter/whole-word case-insensitive"
-  unless ($cgi->regexp) {
-    my @temp_args = ();
-    foreach my $arg (@query_args) {
-      push(@temp_args => (lcfirst($arg), ucfirst($arg)));
-      push(@temp_args => lc($arg)) if lc($arg) ne lcfirst($arg);
-      push(@temp_args => uc($arg)) if uc($arg) ne ucfirst($arg);
-    }
-    @query_args = @temp_args;
-  }
-
   my $titlestr = '__%' . $db->cat_tit . '%__';
   my $titleref = $term_index{$titlestr};  # titles (docnum -> title)
 
@@ -269,6 +257,17 @@ sub get_results {
 
       my $pat = qr{\A\b$query_arg\b\z};
       @matching_terms = sort grep { $_ =~ $pat } @terms;
+    }
+    else {
+      # Provide some kind of "case-insensitive" functionality
+      # i.e. "first-letter/whole-word case-insensitive"
+
+      my %temp_terms = ();
+      $temp_terms{lcfirst($query_arg)}++;
+      $temp_terms{ucfirst($query_arg)}++;
+      $temp_terms{lc($query_arg)}++;
+      $temp_terms{uc($query_arg)}++;
+      push(@matching_terms => keys %temp_terms);
     }
 
     my %seen = ();
