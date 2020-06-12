@@ -86,17 +86,17 @@
                     <li>Query will be performed as <a class="help_me" href="%help_file%#ranked_query">&quot;ranked query&quot;</a></li>
                     <li>Try <a class="help_me" href="%help_file%#regular_expressions">regular expressions</a></li>
                     <li><code>+/-<var title="%tt_term%">term</var></code> = <var title="%tt_term%">term</var> <em>must</em> / <em>must not</em> occur</li>
-                    <li><code><var title="%tt_term%">term</var>#<var title="%tt_number%">number</var></code> = <var title="%tt_term%">term</var>&apos;s weight gets multiplied by <var title="%tt_number%">number</var> (=&gt; <em>boost factor</em>)</li>
+                    <li><code><var title="%tt_term%">term</var>^<var title="%tt_number%">number</var></code> = <var title="%tt_term%">term</var>&apos;s weight gets multiplied by <var title="%tt_number%">number</var> (=&gt; <em>boost factor</em>)</li>
                     <li><a class="help_me" href="%help_file%#custom">Custom ranking</a>:<br />
                       <code>tf</code> = Term frequency<br />
                       <code>df</code> = Document frequency<br />
                       <code>N</code> = Number of documents in the collection</li>
                     <li>Threshold:<br />
                       <code><var title="%tt_number%">number</var>(%)</code> = Display only documents with at least a weight of <var title="%tt_number%">number</var> (percent of the maximum weight)<br />
-                      <code>#<var title="%tt_number%">number</var>(%)</code> = Display top <var title="%tt_number%">number</var> (percent) documents</li>
+                      <code>@<var title="%tt_number%">number</var>(%)</code> = Display top <var title="%tt_number%">number</var> (percent) documents</li>
                   </ul>
                   <strong>Sample query:</strong>
-                  <a href="%cgi_file%?db=%my_db%&amp;query=%2Bindexierung+ranking.*%231.5+automatisch%23-1.5+-thesaurus&amp;ranking=2&amp;regexp=1&amp;threshold=2.75&amp;action=get_results"><samp>+indexierung ranking.*#1.5 automatisch#-1.5 -thesaurus</samp></a>
+                  <a href="%cgi_file%?db=%my_db%&amp;query=%2Bindexierung+ranking.*^1.5+automatisch^-1.5+-thesaurus&amp;ranking=2&amp;regexp=1&amp;threshold=2.75&amp;action=get_results"><samp>+indexierung ranking.*^1.5 automatisch^-1.5 -thesaurus</samp></a>
                 </td>
               </tr>
             </table>

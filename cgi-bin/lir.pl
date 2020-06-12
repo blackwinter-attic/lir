@@ -132,13 +132,6 @@ my $my_action = defined $action{$cgi->action} ? $cgi->action : 'default';
 
 $tmpl = HTML::Template->new('filename'                    => $TMPL{$my_action},
                             'vanguard_compatibility_mode' => 1,
-                            # NOTE: HTML/Template.pm:1991 (2.95):
-                            # $self->{template} =~ s/%(\w+)%/<TMPL_VAR NAME=$1>/g;
-                            #                         ^^^^^
-                            # in order to prevent HTML::Template from trying to
-                            # substitute constructs like:
-                            # query=%2Bindexierung+ranking.*%231.5+automatisch%23-1.5+-thesaurus
-                            #       ^^^^^^^^^^^^^^^^^^^^^^^^^
                             'loop_context_vars'           => 1,
                             'global_vars'                 => 1)
   or die "Can't get template for action $my_action!\n";
@@ -258,12 +251,12 @@ sub get_results {
     }
     elsif ($old_query_arg) {
       # Inner part of a phrase
-      # Ignore $must, consider "#..." as literal
+      # Ignore $must, consider "^..." as literal
       $old_query_arg .= ' ' . $query_arg;
       next;  # next foreach
     }
 
-    ($query_arg, my $modifier) = split('#', $query_arg, 2);
+    ($query_arg, my $modifier) = split('\^', $query_arg, 2);
     $modifier = 1 unless defined $modifier;
 
     my @matching_terms = ($query_arg);  # Assume match -- will be ignored if it's not (see below)
@@ -354,20 +347,20 @@ sub get_results {
   my $threshold_val = 0;
   my $threshold_num = $max_result_num;
   unless ($cgi->threshold eq '' || $cgi->offset > 1) {
-    ($threshold = $cgi->threshold) =~ s{[^0-9\-+.%#]}{}g;  # Delete everything except allowed characters
+    ($threshold = $cgi->threshold) =~ s{[^0-9\-+.%@]}{}g;  # Delete everything except allowed characters
     if ($cgi->ranking ne 'z') {
-      if    ($threshold =~ m{\A#.*%\z}) { ($threshold_num = $threshold) =~ tr{%#}{}d;
+      if    ($threshold =~ m{\A@.*%\z}) { ($threshold_num = $threshold) =~ tr{%@}{}d;
                                            $threshold_num = $threshold_num / 100 * $max_result_num }
-      elsif ($threshold =~ m{\A#})      { ($threshold_num = $threshold) =~ tr{%#}{}d;
+      elsif ($threshold =~ m{\A@})      { ($threshold_num = $threshold) =~ tr{%@}{}d;
                                            $threshold_num =~ s{\..*}{}; }
-      elsif ($threshold =~ m{%\z})      { ($threshold_val = $threshold) =~ tr{%#}{}d;
+      elsif ($threshold =~ m{%\z})      { ($threshold_val = $threshold) =~ tr{%@}{}d;
                                            $threshold_val = $threshold_val / 100 * $max_weight }
-      else                              { ($threshold_val = $threshold) =~ tr{%#}{}d; }
+      else                              { ($threshold_val = $threshold) =~ tr{%@}{}d; }
     }
     else {
-      if    ($threshold =~ m{\A#.*%\z}) { ($threshold_num = $threshold) =~ tr{%#}{}d;
+      if    ($threshold =~ m{\A@.*%\z}) { ($threshold_num = $threshold) =~ tr{%@}{}d;
                                            $threshold_num = $threshold_num / 100 * $max_result_num }
-      elsif ($threshold =~ m{\A#})      { ($threshold_num = $threshold) =~ tr{%#}{}d;
+      elsif ($threshold =~ m{\A@})      { ($threshold_num = $threshold) =~ tr{%@}{}d;
                                            $threshold_num =~ s{\..*}{}; }
     }
   }
@@ -377,7 +370,7 @@ sub get_results {
     push(@result_list, $doc)
       if $threshold eq ''
          # No threshold
-      || $threshold =~ m{\A#}
+      || $threshold =~ m{\A@}
          # Top of list
       || $cgi->ranking eq 'z'
          # No ranking => no weight to exceed threshold
