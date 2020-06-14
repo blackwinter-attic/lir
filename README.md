@@ -2,7 +2,7 @@
 
 ## VERSION
 
-This documentation refers to LIR version 0.3
+This documentation refers to LIR version 0.7
 
 
 ## DESCRIPTION

@@ -54,7 +54,7 @@ use LIR::BaseUtil         qw(FALSE TRUE);
 ### global settings
 
 # My lir.pl version
-our $VERSION = '0.31';
+our $VERSION = '0.7';
 
 # Default CGI arguments
 our %CGI_DFLTS = (            # (CGI argument -> argument value)
