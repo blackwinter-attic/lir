@@ -272,14 +272,7 @@ sub submit {
     );
     $collection_id = $db{'id'};
 
-    map { $_ = FALSE } @db{keys %RANKING};
-
-    foreach my $r (sort keys %r_files) {
-      $db{$r} = TRUE;
-    }
-    $db{'x'}  = TRUE;
-    $db{'y'}  = TRUE;
-    $db{'z'}  = TRUE;
+    map { $_ = TRUE } @db{keys %RANKING};
 
     tie_index(\%db);
 
@@ -289,7 +282,7 @@ sub submit {
     my $summary   = '';
 
     # Read in DB
-    $summary .= "Processing db file: $db_file...\n";
+    $summary .= "Processing DB file: $db_file...\n";
 
     my ($i, $j) = (0, 1);
     my $db_fh   = param('db_file');
@@ -321,7 +314,7 @@ sub submit {
         %record = ();
       }
 
-      $summary .= "$i " if $j && $i % 100 == 0;
+      $summary .= "$i " if $j && $i % 1000 == 0;
     }
     $summary .= "\n$i records read\n";
     close $db_fh;
@@ -331,8 +324,13 @@ sub submit {
       die "Couldn't read DB file: $db_file!\n";
     }
 
+    my %ranking = %RANKING;
+    delete @ranking{qw(x y z)};
+
     # Read in ranking files
     foreach my $r (sort keys %r_files) {
+      delete $ranking{$r};
+
       my $r_file = $r_files{$r}->{'file'};
       my $r_enc  = $r_files{$r}->{'enc'};
 
@@ -373,13 +371,107 @@ sub submit {
             $doc_terms{$id}->{'x'}->{$t}  = $f;
           }
         }
-        $summary .= "$i " if $j && $i % 100 == 0;
+        $summary .= "$i " if $j && $i % 1000 == 0;
       }
       $summary .= "\n$i records read\n";
 
       unless ($i) {
         unlink $db_path, $idx_path, $cfg_path;
         die "Couldn't read ranking file: $r_file!\n";
+      }
+    }
+
+    # Missing rankings
+    if (%ranking) {
+      $summary .= "\nCalculating missing rankings...\n";
+
+      # NOTE: [*] Assuming word form == basic form
+
+      my $docNum   = scalar keys %doc_terms;   # docNum | N
+      my $colLen   = scalar keys %temp_index;  # colLen [*]
+      my %freqW    = ();                       # [freq(W)]
+      my %formLenD = ();                       # [formLen(D)]
+
+      foreach my $id (keys %doc_terms) {
+        my %term_freqs = %{$doc_terms{$id}->{'x'}};
+
+        foreach my $t (keys %term_freqs) {
+          $freqW{$t} += $term_freqs{$t};
+          $formLenD{$id}++;
+        }
+      }
+
+      foreach my $r (sort keys %ranking) {
+        $summary .= "- Calculating ranking: $ranking{$r}...\n";
+
+        foreach my $id (keys %doc_terms) {
+          my %term_freqs = %{$doc_terms{$id}->{'x'}};
+
+          my $formLenD = $formLenD{$id};  # formLen(D)
+          my $docLenD  = $formLenD;       # docLen(D) [*]
+
+          foreach my $t (keys %term_freqs) {
+            my $docNumW = scalar keys %{$temp_index{$t}};  # docNum(W) | df
+            my $freqWD  = $term_freqs{$t};                 # freq(W, D) | tf
+            my $freqW   = $freqW{$t};                      # freq(W)
+            my $lenW    = length $t;                       # len(W)
+            my $wWD     = undef;                           # w(W, D)
+
+            # Salton
+            if ($r eq '0') {
+              $wWD = $freqWD * log($docNum / $docNumW);
+            }
+            # Kascade einfach
+            elsif ($r eq '1') {
+              my $w1 = 1 - $docNumW / $freqW;
+              my $w2 = 1 - (($docLenD / $colLen) / ($freqWD / $freqW));
+              $w2 = 0 if $w2 < 0;
+              my $w3 = log($lenW) / 4;
+
+              my ($c1, $c2, $c3) = (1, 1, 1);
+              $wWD = $c1 * $w1 + $c2 * $w2 + $c3 * $w3;
+            }
+            # Kascade komplex
+            elsif ($r eq '2') {
+              my $q = $freqW / $colLen;
+              my $p = sub {
+                my $i = shift;
+                my $j = 1;
+                my $k = 1;
+
+                $k *= ++$j while $j < $i;
+
+                return exp(-$q) * $q**$i / $k;
+              };
+
+              my $w1 = 1 - $docNumW / $formLenD * (1 - exp(-$q));
+              $w1 = 0 if $w1 < 0;
+              my $i = 0;
+              my $w2 = 0;
+              $w2 += $p->(++$i) * $i while $i < $freqWD;
+              $w2 /= $q;
+              my $w3 = log($lenW) / 4;
+
+              my ($c1, $c2, $c3) = (1, 1, 1);
+              $wWD = $c1 * $w1 + $c2 * $w2 + $c3 * $w3;
+            }
+            # Robertson
+            elsif ($r eq '3') {
+              my $c = 1.5;  # c ∈ [1.2, 2.0]
+              $wWD = ($c + 1) * $freqWD / ($c + $freqWD) * log(($docNum - $docNumW + 0.5) / ($docNumW + 0.5));
+            }
+            # IDF
+            elsif ($r eq '4') {
+              $wWD = log($docNum / $docNumW);
+            }
+
+            if (defined $wWD) {
+              my $w = int($wWD * 10000) / 10000;
+              $temp_index{$t}->{$id}->{$r} = $w;
+              $doc_terms{$id}->{$r}->{$t}  = $w;
+            }
+          }
+        }
       }
     }
 

@@ -53,7 +53,7 @@ use LIR::GlobalConfig     qw($TEMPLATES);
 ### global settings
 
 # My lir_index.pl version
-our $VERSION = '0.19';
+our $VERSION = '0.2';
 
 # Default CGI arguments
 our %CGI_DFLTS = (            # (CGI argument -> argument value)
