@@ -49,7 +49,7 @@
         <li>Terms beginning with a <code>+</code> sign <strong>must</strong> occur.</li>
         <li>Terms beginning with a <code>-</code> sign <strong>must not</strong> occur.</li>
         <li>You can modify (&quot;boost&quot;) a term&apos;s weight by appending &quot;^&quot; plus value to the term which will be multiplied with the term&apos;s initial weight (negative values are possible as well).</li>
-        <li>Sample query: <a href="%cgi_file%?db=lir&amp;query=%2Bindexierung+ranking.*^1.5+automatisch^-1.5+-thesaurus&amp;ranking=2&amp;regexp=1&amp;threshold=2.75&amp;action=get_results"><samp>+indexierung ranking.*^1.5 automatisch^-1.5 -thesaurus</samp></a><br />Will find documents containing &quot;indexierung&quot; and preferably &quot;ranking&quot; (the &quot;.*&quot; indicates end-truncation) but not &quot;thesaurus&quot;, any occurence of &quot;automatisch&quot; will decrease the document&apos;s rank.</li>
+        <li>Sample query: <a href="%cgi_file%?db=lir&amp;query=%2Bindexierung+ranking.*^1.5+automatisch^-1.5+-thesaurus&amp;ranking=2&amp;regexp=1&amp;threshold=2.5&amp;action=get_results"><samp>+indexierung ranking.*^1.5 automatisch^-1.5 -thesaurus</samp></a><br />Will find documents containing &quot;indexierung&quot; and preferably &quot;ranking&quot; (the &quot;.*&quot; indicates end-truncation) but not &quot;thesaurus&quot;, any occurence of &quot;automatisch&quot; will decrease the document&apos;s rank.</li>
       </ul>
     </p>
     <hr />

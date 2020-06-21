@@ -63,27 +63,33 @@
               </tr>
               <tr>
                 <td></td>
-                <td><hr /></td>
+                <td colspan="3"><hr /></td>
               </tr>
               <tr onmouseover="highlight('4')" onmouseout="highlight('4')">
                 <td class="form_label"><label for="input_db_file"><strong>DB file</strong></label>:</td>
                 <td><TMPL_IF name="missing_db_file"><span class="missing">DB file missing!</span><br /></TMPL_IF><TMPL_IF name="cantread_db"><span class="missing">Can&apos;t read DB file!</span><br /></TMPL_IF><input id="input_db_file" name="db_file" type="file" size="30" maxlength="100000000" accept="text/*"></input></td> <!-- the "value" attribute is not supported for security reasons (http://de.selfhtml.org/html/formulare/datei_upload.htm#definieren) -->
-                <td><label for="select_db_encoding">Encoding</label>:</td>
+                <td class="form_label"><label for="select_db_encoding">Encoding</label>:</td>
                 <td><select id="select_db_encoding" name="db_enc" size="1">
                   <option>UTF-8</option>
                   <option>CP850</option>
                   <option>ISO-8859-1</option>
                 </select></td>
               </tr>
+              <tr onmouseover="highlight('5')" onmouseout="highlight('5')">
+                <td class="form_label"><label for="input_cat_id"><strong>ID Category</strong></label>:</td>
+                <td><input id="input_cat_id" name="cat_id" type="text" size="6" maxlength="40" value="001"></input></td>
+                <td class="form_label"><label for="input_cat_tit"><strong>Title Category</strong></label>:</td>
+                <td><input id="input_cat_tit" name="cat_tit" type="text" size="6" maxlength="40" value="020"></input></td>
+              </tr>
               <tr>
-                <td class="form_label"><strong><em>Ranking files</em></strong></td>
+                <td class="form_label"><strong>Ranking files</strong>:</td>
                 <td colspan="3"><TMPL_IF name="missing_r_file"><span class="missing">Ranking file missing! (You need to provide at least one)</span></TMPL_IF><TMPL_IF name="cantread_r"><span class="missing">Can&apos;t read ranking file! (At least one of them)</span><br /></TMPL_IF></td>
               </tr>
               <TMPL_LOOP name="input_ranking_files">
-              <tr onmouseover="highlight('5')" onmouseout="highlight('5')">
+              <tr onmouseover="highlight('6')" onmouseout="highlight('6')">
                 <td class="form_label"><label for="input_%id%_file">%name%</label>:</td>
                 <td><input id="input_%id%_file" name="r%id%_file" type="file" size="30" maxlength="100000000" accept="text/*"></input></td>
-                <td><label for="select_r%id%_encoding">Encoding</label>:</td>
+                <td class="form_label"><label for="select_r%id%_encoding">Encoding</label>:</td>
                 <td><select id="select_r%id%_encoding" name="r%id%_enc" size="1">
                   <option>UTF-8</option>
                   <option>CP850</option>
@@ -91,7 +97,7 @@
                 </select></td>
               </tr>
               </TMPL_LOOP>
-              <tr onmouseover="highlight('6')" onmouseout="highlight('6')">
+              <tr onmouseover="highlight('7')" onmouseout="highlight('7')">
                 <td></td>
                 <td colspan="3"><hr /><input type="submit" value="Submit"></input> <input type="reset" value="Reset"></input></td>
               </tr>
@@ -112,8 +118,9 @@
                     <li id="step3" <TMPL_IF name="collection_ok">style="color: grey"</TMPL_IF>>Enter a description. Defaults to collection name. E.g. <em>My test database (xxx records)</em></li>
                     <hr />
                     <li id="step4" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>Specify <strong>DB file</strong> (required!). <a href="%home_file%files/lir-sample.db">Sample file</a></li>
-                    <li id="step5" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>Specify <u>at least one</u> <strong>Ranking file</strong> (required!). <a href="%home_file%files/lir-sample.idx">Sample file</a></li>
-                    <li id="step6" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>Submit your request - and <strong>please be patient</strong>. The program needs to upload the specified files and process them - only then will a summary be displayed.</li>
+                    <li id="step5" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>Specify key <strong>Categories</strong> matching your data format.</li>
+                    <li id="step6" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>Specify <u>at least one</u> <strong>Ranking file</strong> (required!). <a href="%home_file%files/lir-sample.idx">Sample file</a></li>
+                    <li id="step7" <TMPL_UNLESS name="collection_ok">style="color: grey"</TMPL_UNLESS>>Submit your request - and <strong>please be patient</strong>. The program needs to upload the specified files and process them - only then will a summary be displayed.</li>
                   </ol>
                 </td>
               </tr>

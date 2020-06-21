@@ -54,10 +54,6 @@ $ENV{'PATH'} = '/bin:/usr/bin:/usr/local/bin';
 # Make %ENV safer
 delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 
-# Categories
-my $cat_id  = '001';
-my $cat_tit = '020';
-
 # My indexes
 my %records      = ();
 my %temp_records = ();
@@ -252,6 +248,10 @@ sub submit {
 
   # Unless something missing/already existing
   unless ($missing || $cantread{'db'} || $cantread{'r'} || $exists) {
+    # Categories
+    my $cat_id  = $cgi->arg('cat_id')  || '001';
+    my $cat_tit = $cgi->arg('cat_tit') || '020';
+
     # Remove existing files
     unlink $db_path, $idx_path, $cfg_path;
 
@@ -268,7 +268,9 @@ sub submit {
       'name'         => ucfirst($LAB) . ': ' . $name,
       'info'         => ucfirst($LAB) . ': ' . $desc,
       'db_file'      => catfile($LAB, $db_dbm),
-      'idx_file'     => catfile($LAB, $idx_dbm)
+      'idx_file'     => catfile($LAB, $idx_dbm),
+      'cat_id'       => $cat_id,
+      'cat_tit'      => $cat_tit
     );
     $collection_id = $db{'id'};
 
